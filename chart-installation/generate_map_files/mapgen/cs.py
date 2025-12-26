@@ -49,9 +49,9 @@ def DATCVR(lookup_type, name):
 def DEPARE(lookup_type, name):
 
     # These values are normally passed by the mariner
-    safety_contour = 10
-    shallow_contour = 20
-    deep_contour = 30
+    shallow_contour = '%q_shallow_depth%'
+    safety_contour = '%q_safety_depth%'
+    deep_contour = '%q_deep_depth%'
 
     # Basic implementation of DEPARE constructed symbol.
     # We are missing all the line and fill symbology
@@ -633,51 +633,80 @@ def SLCONS(lookup_type, name):
 
 
 def SOUNDG(lookup_type, name):
-    safety_depth = 30
-    label_template = '''
+    # depth_field = 'Min:DEPTH'
+    depth_field = 'DEPTH'
+    safety_depth = '%q_safety_depth%'
+
+    meters_label_template = '''
         LABEL
-            TEXT (round([DEPTH]+(-0.5),1))
+            TEXT (round([{depth_field}]+(-0.5),1))
             TYPE TRUETYPE
             FONT sc
             COLOR {{color[{colour}].rgb}}
             # COLOR 136 152 139
-            SIZE 8
+            SIZE 12
             ANTIALIAS TRUE
             FORCE TRUE
         END
 
         LABEL
-            EXPRESSION ([DEPTH] > 10 AND [DEPTH] < 31 AND ([DEPTH] * 10 % 10))
-            TEXT ( [DEPTH] * 10 % 10)
-            OFFSET 8 4
+            EXPRESSION ([{depth_field}] > 10 AND [{depth_field}] < 31 AND ([{depth_field}] * 10 % 10))
+            TEXT ([{depth_field}] * 10 % 10)
+            OFFSET 13 7
             TYPE TRUETYPE
             FONT sc
             COLOR {{color[{colour}].rgb}}
             # COLOR 136 152 139
-            SIZE 7
+            SIZE 11
             ANTIALIAS TRUE
             FORCE TRUE
         END
 
         LABEL
-            EXPRESSION ([DEPTH] < 10 AND ([DEPTH] * 10 % 10))
-            TEXT ( [DEPTH] * 10 % 10)
-            OFFSET 5 4
+            EXPRESSION ([{depth_field}] < 10 AND ([{depth_field}] * 10 % 10))
+            TEXT ([{depth_field}] * 10 % 10)
+            OFFSET 8 6
             TYPE TRUETYPE
             FONT sc
             COLOR {{color[{colour}].rgb}}
             # COLOR 136 152 139
-            SIZE 6
+            SIZE 10
+            ANTIALIAS TRUE
+            FORCE TRUE
+        END
+    '''
+
+    feet_label_template = '''
+        LABEL
+            TEXT (round(([{depth_field}]/0.3048)+(-0.5),1))
+            TYPE TRUETYPE
+            FONT sc
+            COLOR {{color[{colour}].rgb}}
+            # COLOR 136 152 139
+            SIZE 12
             ANTIALIAS TRUE
             FORCE TRUE
         END
     '''
 
     return [{
-        'instruction': _MS(label_template.format(colour='CHGRD')),
-        'rules': MSCompare('DEPTH', safety_depth, MSCompare.OP.LE)
+        'instruction': _MS(meters_label_template.format(colour='DEPSC',
+                                                        depth_field=depth_field)),
+        'rules': MSCompare('%q_depth_units%', 'meters') &
+            MSCompare(depth_field, safety_depth, MSCompare.OP.LE)
     }, {
-        'instruction': _MS(label_template.format(colour='CHGRF')),
+        'instruction': _MS(meters_label_template.format(colour='CHGRF',
+                                                        depth_field=depth_field)),
+        'rules': MSCompare('%q_depth_units%', 'meters')
+    }, {
+        'instruction': _MS(feet_label_template.format(colour='DEPSC',
+                                                      depth_field=depth_field)),
+        'rules': MSCompare('%q_depth_units%', 'feet') &
+            MSCompare(depth_field, safety_depth, MSCompare.OP.LE)
+    }, {
+        'instruction': _MS(feet_label_template.format(colour='CHGRF',
+                                                      depth_field=depth_field)),
+        'rules': MSCompare('%q_depth_units%', 'feet')
     }]
 
 

@@ -38,6 +38,20 @@ MAP
           "labelcache_map_edge_buffer" "10"
           "wms_bbox_extended" "true"
         END
+
+        VALIDATION
+            'q_shallow_depth' '^[0-9]+$$'
+            'default_q_shallow_depth' '2'
+
+            'q_safety_depth' '^[0-9]+$$'
+            'default_q_safety_depth' '30'
+
+            'q_deep_depth' '^[0-9]+$$'
+            'default_q_deep_depth' '30'
+
+            'q_depth_units' '^meters|feet$$'
+            'default_q_depth_units' 'meters'
+        END
     END
  
     #

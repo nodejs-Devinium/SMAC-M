@@ -19,6 +19,7 @@ LAYER
     MAXSCALEDENOM {max_scale_denom}
     MINSCALEDENOM {min_scale_denom}
     {data}
+    {cluster}
 {classes}
 END
 
@@ -176,6 +177,16 @@ dynamic_data_instruction = """
     CONNECTIONTYPE OGR
     CONNECTION "{0}/{1}.shp"
     DATA "SELECT *, 360 - {2} as {2}_CAL FROM {1}"
+"""
+
+
+cluster_instruction = """
+    CLUSTER
+        MAXDISTANCE {0}
+        REGION "{1}"
+        BUFFER {2}
+    END
+    PROCESSING "{3}"
 """
 
 

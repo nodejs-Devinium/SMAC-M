@@ -121,6 +121,19 @@ class Layer(LayerBase):
         return '\n'.join(sl.mapfile for sl in self.sublayers)
 
     @property
+    def cluster(self):
+        if self.feature_name == "SOUNDG":
+            # depth_field = 'Min:DEPTH'
+            depth_field = 'DEPTH'
+            max_distance = 35 if int(self.layer_level) <= 3 else 30
+            return templates.cluster_instruction.format(max_distance,
+                                                        "rectangle",
+                                                        50,
+                                                        "ITEMS={}".format(depth_field))
+
+        return ''
+
+    @property
     def data(self):
         if self.rot_field:
             return templates.dynamic_data_instruction.format(
@@ -179,5 +192,6 @@ class SubLayer:
             max_scale_denom=parent.msd['max'],
             min_scale_denom=parent.msd['min'],
             data=parent.data,
+            cluster=parent.cluster,
             classes='\n'.join(self.classes),
         )

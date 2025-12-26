@@ -44,7 +44,9 @@ class MSFilter(_MSFilterBase):
         self.field = field
 
     def to_expression(self, fields):
-        if fields and self.field not in fields:
+        field_name = self.field.split(':').pop()
+
+        if not field_name.startswith('%') and fields and field_name not in fields:
             return 'FALSE'
 
         return '({})'.format(self.render_expression())
@@ -116,6 +118,14 @@ class MSCompare(MSFilter):
         return self.op == self.OP.EQ and self.value == '0'
 
     def render_expression(self):
+        if self.field.startswith('%'):
+            # It's a name of CGI substitute
+            return '"{0}" {1} "{2}"'.format(
+                self.field,
+                self.op,
+                self.value
+            )
+
         tests = []
 
         if self.require_ogr:
