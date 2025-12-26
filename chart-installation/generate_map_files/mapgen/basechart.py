@@ -348,6 +348,8 @@ def process_layer_colors(layer, color_table, input_file, msd, data, target,
             for filename in filenames:
                 if filename.endswith('.shp'):
                     feature = os.path.splitext(filename)[0][4:10]
+                    if feature == 'LIGHTS':
+                        continue
                     geom = os.path.splitext(filename)[0][11:]
                     if shp_types and not shp_types[filename] in geom:
                         print("{} does not match geometry: {} in {}".format(

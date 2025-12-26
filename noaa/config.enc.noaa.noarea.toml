@@ -2,7 +2,7 @@ point_table = "Paper"
 area_table = "Plain"
 displaycategory = "Standard"
 debug = false
-excluded_lookups = ["M_QUAL","LNDARE","LNDRGN","BUAARE","RIVERS","LAKARE"]
+excluded_lookups = ["M_QUAL","LNDARE","LNDRGN","BUAARE","RIVERS","LAKARE","LIGHTS"]
 
 [maxscale_shift]
 FOGSIG=0.1

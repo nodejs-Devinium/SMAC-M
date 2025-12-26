@@ -1,7 +1,9 @@
 point_table = "Paper"
 area_table = "Plain"
 displaycategory = "Standard"
-debug = true
+debug = false
+excluded_lookups = ["LIGHTS"]
+
 [maxscale_shift]
 FOGSIG=0.1
 DAYMAR=0.1

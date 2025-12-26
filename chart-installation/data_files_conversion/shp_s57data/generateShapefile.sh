@@ -38,7 +38,6 @@ TMPPATH=/tmp # tmp files
 
 # IMPORTANT for Depth data SOUNDG,POINT,  recode_by_dssi is important for UTF8 encoding
 export OGR_S57_OPTIONS=SPLIT_MULTIPOINT=ON,ADD_SOUNDG_DEPTH=ON,RECODE_BY_DSSI=ON
-export S57_PROFILE
 
 # Step 1
 # create needed directories
@@ -92,7 +91,7 @@ do
         lnr=$(cat $TMPPATH/layers | awk -F: '{print $1}')
                 
         # Now we can loop ...
-        if [[ "$lnr" != "" ]]
+        if [[ "${lnr}" != "" ]]
         then
             # name is case sensitive for mapping purpose and SQlite doesnt support case sensitive
             ## We need to test with regex it and add '_lcase_' in table name for lcase s-57 objectclasse 
@@ -104,13 +103,13 @@ do
                         
             ## ogr2ogr s-57 to shapefiles
             echoon
-            ogr2ogr -append -skipfailures -f "ESRI Shapefile" --config S57_PROFILE iw $output_shp $where $_FILE $name >> /tmp/errors 2>&1 
+            ogr2ogr -append -skipfailures -f "ESRI Shapefile" -splitlistfields $output_shp $where $_FILE $name >> /tmp/errors 2>&1 
             { echooff; } 2>/dev/null
 
             # add a special dataset to support Lignts signature...
             if [[ "${name}" == "LIGHTS" ]]
             then
-                print("!!!!!! WARNING!!!!!! - The lights layer has been skipped")
+                echo "!!!!!! WARNING !!!!!! - The lights layer has been skipped"
                 continue
                 cat=CL${usage}_${name}_${type}
 
@@ -125,6 +124,9 @@ done < $TMPPATH/FILELIST
 
 python3 convert_labels.py "${CATPATH}" NATSUR
 python3 extract_soundings.py "${CATPATH}"
+
+exit 0
+
 # Run script to build light sector shapefiles
 # TODO: build a better integration.  Need modification on python script
 for level in {1..6}; do 
