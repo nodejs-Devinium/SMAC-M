@@ -204,18 +204,21 @@ class ChartSymbols:
                 @ lookups_from_cs('SOUNDG', 'Point', 'X-SNDG')
             )
 
-    def get_maxscale_shift_layer(self, layer, msd):
+    def get_scale_shift_layer(self, layer, sd_value):
         # NOTE: layers are case senssitive
-        return str(round(int(msd) * self.maxscale_shift.get(layer, 1.0)))
+        return str(round(int(sd_value) * self.maxscale_shift.get(layer, 1.0)))
 
     def get_point_mapfile(self, layer, feature, group, msd, fields,
                           metadata_name):
 
-        # ajusting max scale for layer pointed in config file by user.
-        msd_verified = self.get_maxscale_shift_layer(feature, msd)
+        # ajusting scales for layer pointed in config file by user.
+        msd_verified = {
+            'max': self.get_scale_shift_layer(feature, msd['max']),
+            'min': self.get_scale_shift_layer(feature, msd['min']),
+        }
 
-        layer = Layer(layer, feature, 'POINT', group, msd_verified, fields,
-                      self.point_lookups.get(feature, []), self,
+        layer = Layer(layer, feature, 'POINT', group, msd_verified,
+                      fields, self.point_lookups.get(feature, []), self,
                       metadata_name)
 
         if feature == 'LIGHTS':
@@ -223,20 +226,27 @@ class ChartSymbols:
 
         return layer
 
-    def get_line_mapfile(self, layer, feature, group, max_scale_denom,
-                         fields, metadata_name):
-        # ajusting max scale for layer pointed in config file by user.
-        msd_verified = self.get_maxscale_shift_layer(feature, max_scale_denom)
+    def get_line_mapfile(self, layer, feature, group, msd, fields,
+                         metadata_name):
+
+        # ajusting scales for layer pointed in config file by user.
+        msd_verified = {
+            'max': self.get_scale_shift_layer(feature, msd['max']),
+            'min': self.get_scale_shift_layer(feature, msd['min']),
+        }
 
         return Layer(layer, feature, 'LINE', group, msd_verified,
                      fields, self.line_lookups.get(feature, []), self,
                      metadata_name)
 
-    def get_poly_mapfile(self, layer, feature, group, max_scale_denom,
-                         fields, metadata_name):
+    def get_poly_mapfile(self, layer, feature, group, msd, fields,
+                         metadata_name):
 
-        # ajusting max scale for layer pointed in config file by user.
-        msd_verified = self.get_maxscale_shift_layer(feature, max_scale_denom)
+        # ajusting scales for layer pointed in config file by user.
+        msd_verified = {
+            'max': self.get_scale_shift_layer(feature, msd['max']),
+            'min': self.get_scale_shift_layer(feature, msd['min']),
+        }
 
         return Layer(layer, feature, 'POLYGON', group, msd_verified,
                      fields, self.polygon_lookups.get(feature, []), self,

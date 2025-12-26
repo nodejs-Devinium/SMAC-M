@@ -17,6 +17,7 @@ LAYER
     TYPE {type}
     STATUS ON
     MAXSCALEDENOM {max_scale_denom}
+    MINSCALEDENOM {min_scale_denom}
     {data}
 {classes}
 END
@@ -31,6 +32,7 @@ LAYER
      TYPE LINE
      DATA '{0}/CL{0}_LIGHTS_LINESTRING_SECTOR'
      MAXSCALEDENOM {3}
+     MINSCALEDENOM {4}
      GROUP "{2}"
      TOLERANCE 10
      TEMPLATE dummy.html
@@ -57,6 +59,7 @@ LAYER
      TYPE LINE
      DATA '{0}/CL{0}_LIGHTS_LINESTRING_SECTOR'
      MAXSCALEDENOM {3}
+     MINSCALEDENOM {4}
      GROUP "{2}"
      TOLERANCE 10
      TEMPLATE dummy.html
@@ -115,6 +118,7 @@ LAYER
      TYPE POINT
      DATA '{0}/CL{0}_LIGHTS_POINT_SIGNATURE'
      MAXSCALEDENOM {3}
+     MINSCALEDENOM {4}
      GROUP "{2}"
      TOLERANCE 10
      TEMPLATE dummy.html

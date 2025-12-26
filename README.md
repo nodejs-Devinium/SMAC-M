@@ -202,16 +202,16 @@ python3 chart-installation/generate_map_files/generate_map_config.py configfile.
 
 ### Manage scale of navigation level
 
-By default, Maximum scale visibility can be adjust by editing this file:
+By default, Maximum and Minimum scale visibility can be adjust by editing this file:
 ./chart-installation/generate_map_files/resources/rules/layer_rules/layer_msd.csv
 
-|Navigation Level| Max Scale|
-|1|10000000|
-|2|5000000|
-|3|1000000|
-|4|500000|
-|5|100000|
-|6|50000|
+|Navigation Level|Max Scale|Min Scale|
+|1|10000000|5000000|
+|2|5000000|1000000|
+|3|1000000|500000|
+|4|500000|100000|
+|5|100000|50000|
+|6|50000|100|
 
 Be award if you change default maxscale visibility, you may need to adjust sounding
 points max scale shift in your configuration variable file (`config.toml`)

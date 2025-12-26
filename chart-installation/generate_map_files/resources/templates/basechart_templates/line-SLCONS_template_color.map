@@ -3,7 +3,6 @@
 LAYER
     NAME  "ShorelineConstr_line_{CL}"
     GROUP "{GROUP}"
-    MAXSCALEDENOM {MAXSCALE}
     METADATA
         "ows_title"     "ShorelineConstr_line"
         "ows_enable_request"   "*"
@@ -14,6 +13,7 @@ LAYER
     TYPE LINE
     STATUS ON
     MAXSCALEDENOM {MAXSCALE}
+    MINSCALEDENOM {MINSCALE}
     DATA "{PATH}"
     CLASS
         NAME "Shoreline Constructions (lines)"

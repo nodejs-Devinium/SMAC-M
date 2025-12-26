@@ -3,7 +3,6 @@
 LAYER
     NAME  "ShorelineConstr_Area_{CL}"
     GROUP "{GROUP}"
-    MAXSCALEDENOM {MAXSCALE}
     METADATA
         "ows_title"     "ShorelineConstr"
         "ows_enable_request"   "*"
@@ -14,6 +13,7 @@ LAYER
     TYPE POLYGON
     STATUS ON
     MAXSCALEDENOM {MAXSCALE}
+    MINSCALEDENOM {MINSCALE}
     DATA "{PATH}"
     PROCESSING 'LABEL_NO_CLIP=ON'
     CLASS
