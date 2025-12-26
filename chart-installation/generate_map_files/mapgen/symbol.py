@@ -226,7 +226,7 @@ class SubSymbol:
             color=color_table[color_key].rgb,
             opacity=self.opacity,
             size=self.height * 0.03,
-            stroke_width=0.3 * self.stroke_width,
+            stroke_width=self.stroke_width, # * 0.3
             # We use a slightly larger ratio for the gap to prevent
             # overcrowding
             initialgap=self.center * 0.04,
