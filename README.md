@@ -101,6 +101,8 @@ bash ./chart-installation/generate_map_files/scripts/fix_noaa_mapfiles.sh
 
 And this will re-generate the mapfiles in `generated/map` folder keeping `generated/shp` folder intact.
 
+You can find layer groups and CGI substitutes that can be used in the URLs [here](#layer-groups).
+
 # Greenroom Notes
 
 This has been dockerised so it is easier to run.
@@ -468,3 +470,14 @@ Layers of generated mapfiles are separated into groups:
 They are defined in [layer_groups.py](chart-installation/generate_map_files/mapgen/layer_groups.py) file.
 
 You can use and combine them in the `LAYERS` query parameter when you request the map from your MapServer (e.g. `LAYERS=DEPTHS,SEABED,COMMON`).
+
+## CGI substitutes
+
+Mapfiles accept the following CGI substitutes as the query parameters:
+
+- `q_shallow_depth` (in meters; default: `2`)
+- `q_safety_depth` (in meters; default: `30`)
+- `q_deep_depth` (in meters; default: `30`)
+- `q_depth_units` (`meters` or `feet`; default: `meters`)
+
+They are defined in [SeaChart_THEME.map](chart-installation/generate_map_files/resources/templates/SeaChart_THEME.map#L42-L54) file and used to generate layers for `DEPARE` and `SOUNDG` features.
