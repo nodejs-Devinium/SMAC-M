@@ -11,8 +11,8 @@ RUN echo 'PATH="$HOME/.local/bin/:$PATH"' >>~/.bashrc
 ADD . /app
 WORKDIR /app
 
-RUN pip install "GDAL<=$(gdal-config --version)"
-RUN pip install toml
+RUN pip install --break-system-packages "GDAL<=$(gdal-config --version)"
+RUN pip install --break-system-packages numpy toml wand
 
 RUN export S57_PROFILE
 RUN export OGR_S57_OPTIONS=SPLIT_MULTIPOINT=ON,ADD_SOUNDG_DEPTH=ON
