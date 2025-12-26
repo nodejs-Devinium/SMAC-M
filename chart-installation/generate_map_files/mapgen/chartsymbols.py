@@ -194,6 +194,7 @@ class ChartSymbols:
                     lookup_table.append(lookup)
 
             # Add virtual lookup for X-SNDG
+            """
             self.point_lookups['X-SNDG'] = list(
                 Lookup(
                     id='X-SNDG',
@@ -203,6 +204,7 @@ class ChartSymbols:
                 @ [Lookup(table='Paper'), Lookup(table='Simplified')]
                 @ lookups_from_cs('SOUNDG', 'Point', 'X-SNDG')
             )
+            """
 
     def get_scale_shift_layer(self, layer, sd_value):
         # NOTE: layers are case senssitive
