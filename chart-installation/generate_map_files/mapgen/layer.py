@@ -3,7 +3,7 @@ from functools import total_ordering
 from operator import attrgetter
 
 from utils.enum import OrderedEnum
-from . import templates
+from . import layer_groups, templates
 
 
 class DisplayPriority(OrderedEnum):
@@ -174,7 +174,7 @@ class SubLayer:
             feature=parent.feature_name,
             metadata_name=parent.metadata_name,
             geomtype_humanreadable=self.get_human_readable_geomtype(),
-            group=parent.group,
+            group=layer_groups.get_layer_group(parent.feature_name),
             type=self.geom_type,
             max_scale_denom=parent.msd['max'],
             min_scale_denom=parent.msd['min'],

@@ -343,3 +343,25 @@ named according to the specifications given below:
  |
  |--------------------- CC = producer code
 ```
+
+## Layer groups
+
+Layers of generated mapfiles are separated into groups:
+
+- `BEACH` - Beach and land related objects.
+- `DEPTHS` - Depths, currents, etc.
+- `SEABED` - Seabed, obstructions, pipelines.
+- `SIGNALS` - Buoys, beacons, lights, fog signals, radar.
+- `SPECIAL` - Special areas.
+- `TEXT` - Text layers (e.g. area names).
+- `TRAFFIC` - Traffic routes, etc.
+
+- `COMMON` - Common layers (should be used with all other layers if presented).
+
+- `BROKEN` - Layers that cause errors because of missing attributes, etc.
+
+- `MISC` - Everything else.
+
+They are defined in [layer_groups.py](chart-installation/generate_map_files/mapgen/layer_groups.py) file.
+
+You can use and combine them in the `LAYERS` query parameter when you request the map from your MapServer (e.g. `LAYERS=DEPTHS,SEABED,COMMON`).
