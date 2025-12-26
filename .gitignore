@@ -1,4 +1,6 @@
 *.pyc
 chart-installation/generate_map_files/resources/symbols/*.png
+noaa_enc
+.DS_Store
 ./data/AU5193P0/chart/
 ./data/AU5193P0/map/
