@@ -1,3 +1,106 @@
+# nodejs-Devinium Notes
+
+This fork was modified to generate mapfiles for NOAA ENC data.
+
+We're going to use dockerized version of this repository as well as [dockerized version of MapServer](https://github.com/camptocamp/docker-mapserver).
+
+First of all, when you cloned this repo you need to build a Docker image with it:
+
+```
+docker build -t smac .
+```
+
+After that create a directory that will be used to download NOAA ENC data and generate shapefiles and mapfiles:
+
+```
+mkdir noaa_enc
+cd noaa_enc
+```
+
+**NOTE.** This directory will be ignored by Git (see `.gitignore` file).
+
+Download an archive with desired set of ENC data from here: https://charts.noaa.gov/ENCs/ENCs.shtml
+
+For example:
+
+```
+wget https://charts.noaa.gov/ENCs/All_ENCs.zip
+unzip All_ENCs.zip
+```
+
+After that you should have `ENC_ROOT` folder inside `noaa_enc` directory.
+
+Go back to the root directory of this repo and launch a Docker image:
+
+```
+cd ..
+docker run --rm -it -v /$PWD:/app smac bash
+```
+
+Or you can use absolute path to the repo and execute this command from any folder:
+
+```
+docker run --rm -it -v /<absolute-path-to-this-repo>:/app smac bash
+```
+
+**NOTE.** `--rm` key will remove this container once you use `exit` command.
+
+When you're in Docker container execute the following commands:
+
+```
+python3 ./bin/generate_shapefiles.py ./noaa/config.enc.noaa.toml
+python3 ./chart-installation/generate_map_files/generate_map_config.py ./noaa/config.enc.noaa.toml
+bash ./chart-installation/generate_map_files/scripts/fix_noaa_mapfiles.sh
+```
+
+**NOTE.** You can use `./noaa/config.enc.noaa.noarea.toml` config file to generate mapfiles without land areas.
+
+In the end you should have the following folders created in `noaa_enc` directory:
+
+- `generated/map` - a folder with mapfiles
+- `generated/shp` - a folder with shapefiles (referenced from mapfiles)
+
+Now you can `exit` the Docker container.
+
+And if you want to use these mapfiles via [dockerized version of MapServer](https://github.com/camptocamp/docker-mapserver) you will need to launch the MapServer via `docker-compose.yml` file similar to this:
+
+```
+services:
+  mapserver:
+    image: "camptocamp/mapserver"
+    volumes:
+    - /<absolute-path-to-this-repo>/noaa_enc/generated:/etc/mapserver:ro
+    ports:
+    - "127.0.0.1:8888:80"
+    restart: always
+```
+
+Create and launch the Docker container like this:
+
+```
+docker compose -f /<absolute-path-to-your-docker-compose-file> up -d
+```
+
+And access the map via URL like this:
+
+```
+http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true&STYLES=&CRS=EPSG%3A3857&WIDTH=1345&HEIGHT=574&BBOX=-13877171.677492695,6167575.677658709,-13864320.702112267,6173060.034438163&LAYERS=DEPTHS,SEABED,SIGNALS,SPECIAL&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
+```
+
+As you can see:
+
+- we mapped `generated` directory (with `map` and `shp` folders) to `/etc/mapserver` directory in the MapServer container;
+- when we request the map via URL we specify `/etc/mapserver/map/` path before the mapfile name in the `map` query parameter - this way we access the mapfiles from our `generated/map` folder (which loads corresponding shapefiles from `generated/shp` folder).
+
+Now if you want to update some map generation scripts and update your mapfiles you don't have to generate shapefiles anew (this may be a very long process in case of a large amount of ENC data files). You can simply execute the following commands from this repo's Docker container:
+
+```
+python3 ./chart-installation/generate_map_files/generate_map_config.py ./noaa/config.enc.noaa.toml
+bash ./chart-installation/generate_map_files/scripts/fix_noaa_mapfiles.sh
+```
+
+And this will re-generate the mapfiles in `generated/map` folder keeping `generated/shp` folder intact.
+
 # Greenroom Notes
 
 This has been dockerised so it is easier to run.
