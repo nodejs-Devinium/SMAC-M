@@ -7,6 +7,6 @@ excluded_lookups = ["M_QUAL","LNDARE","LNDRGN","BUAARE","RIVERS","LAKARE","LIGHT
 [paths]
 chartsymbols = "../chart-installation/generate_map_files/resources/chartsymbols/chartsymbols_S57.xml"
 ruleset = "../chart-installation/generate_map_files/resources/rules"
-chart = "../noaa_enc/ENC_ROOT"
-data = "../noaa_enc/generated/shp"
-map = "../noaa_enc/generated/map"
+chart = "/data/ENC_ROOT"
+data = "/data/generated/shp"
+map = "/data/generated/map"

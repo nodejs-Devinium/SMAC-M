@@ -10,14 +10,14 @@ First of all, when you cloned this repo you need to build a Docker image with it
 docker build -t smac .
 ```
 
-After that create a directory that will be used to download NOAA ENC data and generate shapefiles and mapfiles:
+After that create a directory that will be used to download NOAA ENC data and generate shapefiles and mapfiles. It can be anywhere on your disk, even outside of this repo's directory (in fact it's even better to place it outside of this repo's directory) - we will mount it separately to our Docker container.
+
+In our example we will use `/home/noaa-enc` path.
 
 ```
-mkdir noaa_enc
-cd noaa_enc
+mkdir /home/noaa-enc
+cd /home/noaa-enc
 ```
-
-**NOTE.** This directory will be ignored by Git (see `.gitignore` file).
 
 Download an archive with desired set of ENC data from here: https://charts.noaa.gov/ENCs/ENCs.shtml
 
@@ -28,19 +28,12 @@ wget https://charts.noaa.gov/ENCs/All_ENCs.zip
 unzip All_ENCs.zip
 ```
 
-After that you should have `ENC_ROOT` folder inside `noaa_enc` directory.
+After that you should have `ENC_ROOT` folder inside `/home/noaa-enc` directory.
 
-Go back to the root directory of this repo and launch a Docker image:
-
-```
-cd ..
-docker run --rm -it -v /$PWD:/app smac bash
-```
-
-Or you can use absolute path to the repo and execute this command from any folder:
+Launch a Docker image with this repo:
 
 ```
-docker run --rm -it -v /<absolute-path-to-this-repo>:/app smac bash
+docker run --rm -it -v /<absolute-path-to-this-repo>:/app -v /home/noaa-enc:/data smac bash
 ```
 
 **NOTE.** `--rm` key will remove this container once you use `exit` command.
@@ -55,7 +48,7 @@ bash ./chart-installation/generate_map_files/scripts/fix_noaa_mapfiles.sh
 
 **NOTE.** You can use `./noaa/config.enc.noaa.noarea.toml` config file to generate mapfiles without land areas.
 
-In the end you should have the following folders created in `noaa_enc` directory:
+In the end you should have the following folders created in `/home/noaa-enc` directory:
 
 - `generated/map` - a folder with mapfiles
 - `generated/shp` - a folder with shapefiles (referenced from mapfiles)
@@ -69,7 +62,7 @@ services:
   mapserver:
     image: "camptocamp/mapserver"
     volumes:
-    - /<absolute-path-to-this-repo>/noaa_enc/generated:/etc/mapserver:ro
+    - /home/noaa-enc/generated:/etc/mapserver:ro
     ports:
     - "127.0.0.1:8888:80"
     restart: always
