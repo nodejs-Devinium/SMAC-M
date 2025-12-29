@@ -447,6 +447,7 @@ named according to the specifications given below:
 Layers of generated mapfiles are separated into groups:
 
 - `BEACH` - Beach and land related objects.
+- `BRIDGES` - Bridges.
 - `DEPTHS` - Depths, currents, etc.
 - `SEABED` - Seabed, obstructions, pipelines.
 - `SIGNALS` - Buoys, beacons, lights, fog signals, radar.

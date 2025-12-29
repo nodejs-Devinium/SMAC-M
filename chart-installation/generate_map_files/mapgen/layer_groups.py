@@ -1,6 +1,7 @@
 # Layers of generated mapfiles will be separated into groups:
 #
 # - `BEACH` - Beach and land related objects.
+# - `BRIDGES` - Bridges.
 # - `DEPTHS` - Depths, currents, etc.
 # - `SEABED` - Seabed, obstructions, pipelines.
 # - `SIGNALS` - Buoys, beacons, lights, fog signals, radar.
@@ -23,7 +24,6 @@
 _layer_groups = {
     # BEACH
     "ACHARE": "BEACH", # Anchorage area
-    "BRIDGE": "BEACH", # Bridge
     "BUAARE": "BEACH", # Built-up area
     "BUISGL": "BEACH", # Building, single
     "CGUSTA": "BEACH", # Coast guard station
@@ -36,10 +36,12 @@ _layer_groups = {
     "LNDMRK": "BEACH", # Landmark
     "LNDRGN": "BEACH", # Land region
     "MORFAC": "BEACH", # Mooring/Warping facility
-    "PONTON": "BEACH", # Pontoon
     "RIVERS": "BEACH", # River
     "ROADWY": "BEACH", # Road
     "SLCONS": "BEACH", # Shoreline construction
+    # BRIDGES
+    "BRIDGE": "BRIDGES", # Bridge
+    "PONTON": "BRIDGES", # Pontoon
     # DEPTHS
     "DEPARE": "DEPTHS", # Depth area
     "DEPCNT": "DEPTHS", # Depth contour
