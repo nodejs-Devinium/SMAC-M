@@ -140,6 +140,7 @@ if __name__ == '__main__':
         sys.exit(2)
 
     excluded_lookups = args.config.get('excluded_lookups', None)
+    excluded_lookup_labels = args.config.get('excluded_lookup_labels', None)
 
     maxscale_shift = args.config.get('maxscale_shift', None)
 
@@ -179,8 +180,8 @@ if __name__ == '__main__':
                                   RESOURCES_PATH, args.force,
                                   debug, point_table, area_table,
                                   displaycategory, chartsymbols,
-                                  excluded_lookups, maxscale_shift,
-                                  symbol_size_override)
+                                  excluded_lookups, excluded_lookup_labels,
+                                  maxscale_shift, symbol_size_override)
     else:
         print('Data format "{}" has not yet been ported to the configuration '
               'file. Use the old script to generate your mapfiles'

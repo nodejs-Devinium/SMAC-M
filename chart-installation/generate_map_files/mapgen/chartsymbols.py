@@ -46,6 +46,7 @@ class ChartSymbols:
 
     excluded_lookups = ['M_QUAL']
     # excluded_lookups = ExclusiveSet('LIGHTS BCNLAT'.split())
+    excluded_lookup_labels = []
 
     symbol_size_override = {}
     maxscale_shift = {}
@@ -54,13 +55,16 @@ class ChartSymbols:
 
     def __init__(self, file, point_table='Simplified', area_table='Plain',
                  displaycategory=None, color_table='DAY_BRIGHT',
-                 excluded_lookups=None, symbol_size_override=None,
-                 maxscale_shift=None):
+                 excluded_lookups=None, excluded_lookup_labels=None,
+                 symbol_size_override=None, maxscale_shift=None):
         if not os.path.isfile(file):
             raise Exception('chartsymbol file do not exists')
 
         if excluded_lookups is not None:
             self.excluded_lookups = excluded_lookups
+
+        if excluded_lookup_labels is not None:
+            self.excluded_lookup_labels = excluded_lookup_labels
 
         if symbol_size_override is not None:
             self.symbol_size_override = symbol_size_override
@@ -180,6 +184,10 @@ class ChartSymbols:
                 parts = str_instruction.split(';')
                 for part in parts:
                     if not part:
+                        continue
+
+                    if (part.startswith('TX(') or part.startswith('TE(')) and \
+                            name.upper() in self.excluded_lookup_labels:
                         continue
 
                     command = get_command(part)
