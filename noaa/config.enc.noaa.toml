@@ -3,7 +3,7 @@ area_table = "Plain"
 displaycategory = "Standard,Other"
 debug = false
 excluded_lookups = ["LIGHTS"]
-excluded_lookup_labels = ["BCNCAR","BCNISD","BCNLAT","BCNSAW","BCNSPP","BOYCAR","BOYINB","BOYISD","BOYLAT","BOYSAW","BOYSPP","FOGSIG","LIGHTS","RADRNG","RADSTA","RDOCAL","RDOSTA","RTPBCN"]
+excluded_lookup_labels = ["BCNCAR","BCNISD","BCNLAT","BCNSAW","BCNSPP","BOYCAR","BOYINB","BOYISD","BOYLAT","BOYSAW","BOYSPP","BRIDGE","FOGSIG","LIGHTS","RADRNG","RADSTA","RDOCAL","RDOSTA","RTPBCN"]
 
 [paths]
 chartsymbols = "../chart-installation/generate_map_files/resources/chartsymbols/chartsymbols_S57.xml"
