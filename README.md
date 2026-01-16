@@ -80,6 +80,12 @@ And access the map via URL like this:
 http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true&STYLES=&CRS=EPSG%3A3857&WIDTH=1345&HEIGHT=574&BBOX=-13877171.677492695,6167575.677658709,-13864320.702112267,6173060.034438163&LAYERS=DEPTHS,SEABED,SIGNALS,SPECIAL&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
 ```
 
+Or if you want to use tile mode:
+
+```
+http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&FORMAT=image/png&TRANSPARENT=true&MODE=tile&TILEMODE=gmap&TILE=2211+3437+13&TILESIZE=256+256&LAYERS=DEPTHS+SEABED+SIGNALS+SPECIAL&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
+```
+
 As you can see:
 
 - we mapped `generated` directory (with `map` and `shp` folders) to `/etc/mapserver` directory in the MapServer container;

@@ -128,7 +128,7 @@ class Layer(LayerBase):
             max_distance = 35 if int(self.layer_level) <= 3 else 30
             return templates.cluster_instruction.format(max_distance,
                                                         "rectangle",
-                                                        50,
+                                                        256,
                                                         "ITEMS={}".format(depth_field))
 
         return ''
