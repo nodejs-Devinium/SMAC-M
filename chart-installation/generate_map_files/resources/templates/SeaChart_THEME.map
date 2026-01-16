@@ -20,7 +20,7 @@ MAP
     OUTPUTFORMAT
         NAME 'png'
         DRIVER AGG/PNG
-        IMAGEMODE RGB
+        IMAGEMODE RGBA
         TRANSPARENT ON
     END
 
