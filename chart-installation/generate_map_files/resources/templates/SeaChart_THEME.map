@@ -18,9 +18,10 @@ MAP
     FONTSET '${FONTS_PATH}'
     SYMBOLSET "./symbols/symbols-day.map"
     OUTPUTFORMAT
-        NAME 'AGG'
+        NAME 'png'
         DRIVER AGG/PNG
         IMAGEMODE RGB
+        TRANSPARENT ON
     END
 
     SHAPEPATH "${SHAPEPATH}"

@@ -83,7 +83,7 @@ http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&SERVICE=WM
 Or if you want to use tile mode:
 
 ```
-http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&FORMAT=image/png&TRANSPARENT=true&MODE=tile&TILEMODE=gmap&TILE=2211+3437+13&TILESIZE=256+256&LAYERS=DEPTHS+SEABED+SIGNALS+SPECIAL&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
+http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&MODE=tile&TILEMODE=gmap&TILE=2211+3437+13&TILESIZE=256+256&LAYERS=DEPTHS+SEABED+SIGNALS+SPECIAL&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
 ```
 
 As you can see:
