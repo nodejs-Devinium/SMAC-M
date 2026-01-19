@@ -646,7 +646,7 @@ def SOUNDG(lookup_type, name):
             # COLOR 136 152 139
             SIZE 12
             ANTIALIAS TRUE
-            FORCE TRUE
+            FORCE GROUP
         END
 
         LABEL
@@ -659,7 +659,7 @@ def SOUNDG(lookup_type, name):
             # COLOR 136 152 139
             SIZE 11
             ANTIALIAS TRUE
-            FORCE TRUE
+            FORCE GROUP
         END
 
         LABEL
@@ -672,7 +672,7 @@ def SOUNDG(lookup_type, name):
             # COLOR 136 152 139
             SIZE 10
             ANTIALIAS TRUE
-            FORCE TRUE
+            FORCE GROUP
         END
     '''
 
@@ -685,7 +685,7 @@ def SOUNDG(lookup_type, name):
             # COLOR 136 152 139
             SIZE 12
             ANTIALIAS TRUE
-            FORCE TRUE
+            BUFFER 3
         END
     '''
 

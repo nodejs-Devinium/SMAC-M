@@ -186,7 +186,6 @@ cluster_instruction = """
         REGION "{1}"
         BUFFER {2}
     END
-    PROCESSING "CLUSTER_ALGORITHM=SIMPLE"
     PROCESSING "CLUSTER_KEEP_LOCATIONS=ON"
     PROCESSING "{3}"
 """

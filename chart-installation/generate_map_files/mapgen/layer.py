@@ -125,10 +125,11 @@ class Layer(LayerBase):
         if self.feature_name == "SOUNDG":
             # depth_field = 'Min:DEPTH'
             depth_field = 'DEPTH'
-            max_distance = 35 if int(self.layer_level) <= 3 else 30
+            max_distance = 50 if int(self.layer_level) <= 3 else 30
+            buffer = 10 if int(self.layer_level) <= 3 else 1
             return templates.cluster_instruction.format(max_distance,
-                                                        "rectangle",
-                                                        256,
+                                                        "ellipse",
+                                                        buffer,
                                                         "ITEMS={}".format(depth_field))
 
         return ''
