@@ -97,6 +97,9 @@ class Layer(LayerBase):
             self.rot_field = self.rot_field or lookup.rot_field
 
             expression = lookup.get_expression(fields)
+            if '<EXCLUDE>' in expression:
+                continue
+
             styleitems = lookup.get_styleitems(chartsymbols,
                                                self.feature_name,
                                                self.geom_type.value,

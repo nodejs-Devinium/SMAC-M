@@ -47,7 +47,7 @@ class MSFilter(_MSFilterBase):
         field_name = self.field.split(':').pop()
 
         if not field_name.startswith('%') and fields and field_name not in fields:
-            return 'FALSE'
+            return '<EXCLUDE>' # will be used to find classes to exclude from mapfiles
 
         return '({})'.format(self.render_expression())
 
