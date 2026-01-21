@@ -1,6 +1,6 @@
 # nodejs-Devinium Notes
 
-This fork was modified to generate mapfiles for NOAA ENC data.
+This fork was modified to generate shapefiles and mapfiles for NOAA ENC data.
 
 We're going to use dockerized version of this repository as well as [dockerized version of MapServer](https://github.com/camptocamp/docker-mapserver).
 
@@ -42,6 +42,7 @@ When you're in Docker container execute the following commands:
 
 ```
 python3 ./bin/generate_shapefiles.py ./noaa/config.enc.noaa.toml
+bash ./chart-installation/generate_map_files/scripts/index_noaa_shapefiles.sh
 python3 ./chart-installation/generate_map_files/generate_map_config.py ./noaa/config.enc.noaa.toml
 bash ./chart-installation/generate_map_files/scripts/fix_noaa_mapfiles.sh
 ```

@@ -3,7 +3,7 @@
 # IMPORTANT!
 #
 # This script should be executed ONLY from the Docker container and ONLY for the mapfiles generated
-# using `noaa/config.enc.noaa.toml` or `noaa/config.enc.noaa.noarea.toml` config files!
+# using `noaa/config.enc.noaa.*.toml` config files!
 
 # update absolute paths with the relative ones
 sed -i 's/\/data\/generated\/shp/..\/shp/g' /data/generated/map/*.map
