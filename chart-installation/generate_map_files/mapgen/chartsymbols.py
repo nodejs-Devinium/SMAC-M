@@ -7,6 +7,7 @@ from .cs import lookups_from_cs
 from .filters import MSAnd, MSFilter
 from .instructions import get_command, CS
 from .layer import DisplayPriority, Layer, LightsLayer
+from .layer_groups import get_layer_group
 from .lookup import Lookup
 from .symbol import VectorSymbol, Pattern
 
@@ -47,6 +48,7 @@ class ChartSymbols:
     excluded_lookups = ['M_QUAL']
     # excluded_lookups = ExclusiveSet('LIGHTS BCNLAT'.split())
     excluded_lookup_labels = []
+    layer_groups_to_keep = None
 
     symbol_size_override = {}
     maxscale_shift = {}
@@ -56,6 +58,7 @@ class ChartSymbols:
     def __init__(self, file, point_table='Simplified', area_table='Plain',
                  displaycategory=None, color_table='DAY_BRIGHT',
                  excluded_lookups=None, excluded_lookup_labels=None,
+                 layer_groups_to_keep=None,
                  symbol_size_override=None, maxscale_shift=None):
         if not os.path.isfile(file):
             raise Exception('chartsymbol file do not exists')
@@ -65,6 +68,9 @@ class ChartSymbols:
 
         if excluded_lookup_labels is not None:
             self.excluded_lookup_labels = excluded_lookup_labels
+
+        if layer_groups_to_keep is not None and len(layer_groups_to_keep) > 0:
+            self.layer_groups_to_keep = layer_groups_to_keep;
 
         if symbol_size_override is not None:
             self.symbol_size_override = symbol_size_override
@@ -157,6 +163,11 @@ class ChartSymbols:
                 continue
 
             if name in self.excluded_lookups:
+                continue
+
+            layer_group = get_layer_group(name)
+            if self.layer_groups_to_keep is not None and \
+                    layer_group not in self.layer_groups_to_keep:
                 continue
 
             if table_name in (point_style, area_style, 'Lines') and \

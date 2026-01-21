@@ -46,7 +46,7 @@ python3 ./chart-installation/generate_map_files/generate_map_config.py ./noaa/co
 bash ./chart-installation/generate_map_files/scripts/fix_noaa_mapfiles.sh
 ```
 
-**NOTE.** You can use `./noaa/config.enc.noaa.noarea.toml` config file to generate mapfiles without land areas.
+**NOTE.** You can use `./noaa/config.enc.noaa.noarea.toml` config file to generate mapfiles without land areas. Or even use `./noaa/config.enc.noaa.noarea.compact.toml` config file that will generate mapfiles only with features from [layer groups](#layer-groups) that you're going to use (see `layer_groups_to_keep` option) - this can make mapfiles much smaller and faster to read and parse by MapServer.
 
 In the end you should have the following folders created in `/home/noaa-enc` directory:
 

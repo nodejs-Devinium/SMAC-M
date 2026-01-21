@@ -141,6 +141,7 @@ if __name__ == '__main__':
 
     excluded_lookups = args.config.get('excluded_lookups', None)
     excluded_lookup_labels = args.config.get('excluded_lookup_labels', None)
+    layer_groups_to_keep = args.config.get('layer_groups_to_keep', None)
 
     maxscale_shift = args.config.get('maxscale_shift', None)
 
@@ -181,6 +182,7 @@ if __name__ == '__main__':
                                   debug, point_table, area_table,
                                   displaycategory, chartsymbols,
                                   excluded_lookups, excluded_lookup_labels,
+                                  layer_groups_to_keep,
                                   maxscale_shift, symbol_size_override)
     else:
         print('Data format "{}" has not yet been ported to the configuration '
