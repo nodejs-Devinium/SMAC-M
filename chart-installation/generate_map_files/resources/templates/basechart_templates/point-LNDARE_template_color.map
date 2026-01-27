@@ -13,7 +13,6 @@ LAYER
     STATUS ON
     TYPE POINT
     MAXSCALEDENOM {MAXSCALE}
-    MINSCALEDENOM {MINSCALE}
     DATA "{PATH}"
     CLASS
         NAME "Landarea (points)"

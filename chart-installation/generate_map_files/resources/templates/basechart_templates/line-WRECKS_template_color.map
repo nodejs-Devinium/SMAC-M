@@ -12,7 +12,6 @@ LAYER
     TEMPLATE blank.html
     STATUS ON
     MAXSCALEDENOM {MAXSCALE}
-    MINSCALEDENOM {MINSCALE}
     DATA "{PATH}"
     CLASS
        NAME "Wrecks (lines)"

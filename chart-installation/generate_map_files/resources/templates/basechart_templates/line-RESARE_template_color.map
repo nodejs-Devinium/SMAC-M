@@ -13,7 +13,6 @@ LAYER
     TYPE LINE
     STATUS ON
     MAXSCALEDENOM {MAXSCALE}
-    MINSCALEDENOM {MINSCALE}
     DATA "{PATH}"
     CLASS
         NAME "Restricted Area (lines)"

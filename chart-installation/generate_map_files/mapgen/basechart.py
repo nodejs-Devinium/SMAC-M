@@ -124,7 +124,7 @@ def generate_basechart_config(data_path, map_path, rule_set_path, resource_dir,
         resource_dir, "fonts"), os.path.join(map_path, "fonts"))
 
 
-def get_scaledenom(config):
+def get_maxscaledenom(config):
 
     #
     #  Read max scale denom values from a resource file (layer_msd.csv)
@@ -133,7 +133,7 @@ def get_scaledenom(config):
     with open(config + '/layer_rules/layer_msd.csv', 'r') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            msd[row[0]] = { 'max': row[1], 'min': row[2] }
+            msd[row[0]] = row[1]
 
     return msd
 
@@ -162,7 +162,7 @@ def process_all_layers(data, target, config, point_table='Simplified',
                        symbol_size_override=None):
 
     # Reimplementation of the shel script of the same name
-    msd = get_scaledenom(config)
+    msd = get_maxscaledenom(config)
 
     chartsymbols = None
     if chartsymbols_file:
@@ -276,8 +276,7 @@ def get_layer_mapfile(layer, feature, group, color_table, msd):
     mapfile = re.sub(r'{PATH}', '{}/{}'.format(layer, base), mapfile)
     mapfile = re.sub(r'{PATH_OGR}', '{}/{}.shp'.format(layer, base), mapfile)
     mapfile = re.sub(r'{OGR_SQL_LAYER}', base, mapfile)
-    mapfile = re.sub(r'{MAXSCALE}', msd['max'], mapfile)
-    mapfile = re.sub(r'{MINSCALE}', msd['min'], mapfile)
+    mapfile = re.sub(r'{MAXSCALE}', msd, mapfile)
     mapfile = re.sub(r'{GROUP}', group, mapfile)
     mapfile = re.sub(r'{(.....)}', get_hex_color, mapfile)
     mapfile = re.sub(r'{(.....)_rgb}', get_rgb_color, mapfile)

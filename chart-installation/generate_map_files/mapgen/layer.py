@@ -161,8 +161,7 @@ class LightsLayer(LayerBase):
             self.main_layer.layer_level,
             self.main_layer.mapfile,
             self.main_layer.group,
-            self.main_layer.msd['max'],
-            self.main_layer.msd['min'],
+            self.main_layer.msd,
         )
 
 
@@ -193,8 +192,7 @@ class SubLayer:
             geomtype_humanreadable=self.get_human_readable_geomtype(),
             group=layer_groups.get_layer_group(parent.feature_name),
             type=self.geom_type,
-            max_scale_denom=parent.msd['max'],
-            min_scale_denom=parent.msd['min'],
+            max_scale_denom=parent.msd,
             data=parent.data,
             cluster=parent.cluster,
             classes='\n'.join(self.classes),

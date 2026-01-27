@@ -15,7 +15,6 @@ LAYER
     CONNECTION "{PATH_OGR}"
     DATA 'SELECT RCID,-ORIENT FROM "{OGR_SQL_LAYER}"'
     MAXSCALEDENOM {MAXSCALE}
-    MINSCALEDENOM {MINSCALE}
 #
 #   NOTE: ORIENT is CWW should be CW in Mapserver,
 #         changing orientation with - sign in SQL statement with OGR data retrival
