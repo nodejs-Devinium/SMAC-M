@@ -3,6 +3,7 @@
 # - `BEACH` - Beach and land related objects.
 # - `BRIDGES` - Bridges.
 # - `DEPTHS` - Depths, currents, etc.
+# - `LAND` - Land area.
 # - `SEABED` - Seabed, obstructions, pipelines.
 # - `SIGNALS` - Buoys, beacons, lights, fog signals, radar.
 # - `SPECIAL` - Special areas.
@@ -31,7 +32,6 @@ _layer_groups = {
     "CONVYR": "BEACH", # Conveyor
     "FORSTC": "BEACH", # Fortified structure
     "FSHFAC": "BEACH", # Fishing facility
-    "LNDARE": "BEACH", # Land area
     "LNDELV": "BEACH", # Land elevation
     "LNDMRK": "BEACH", # Landmark
     "LNDRGN": "BEACH", # Land region
@@ -46,6 +46,8 @@ _layer_groups = {
     "DEPARE": "DEPTHS", # Depth area
     "DEPCNT": "DEPTHS", # Depth contour
     "SOUNDG": "DEPTHS", # Sounding
+    # LAND
+    "LNDARE": "LAND", # Land area
     # SEABED
     "CANALS": "SPECIAL", # Canal
     "CBLARE": "SEABED", # Cable area
@@ -109,4 +111,10 @@ def get_layer_group(feature):
     if feature:
         return _layer_groups.get(feature.upper(), "MISC")
 
-    return "MSC"
+    return "MISC"
+
+def get_layer_groups():
+    all_values = _layer_groups.values()
+    unique_values = set(all_values)
+    unique_values.add('MISC')
+    return list(unique_values)

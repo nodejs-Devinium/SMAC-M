@@ -47,7 +47,7 @@ python3 ./chart-installation/generate_map_files/generate_map_config.py ./noaa/co
 bash ./chart-installation/generate_map_files/scripts/fix_noaa_mapfiles.sh
 ```
 
-**NOTE.** You can use `./noaa/config.enc.noaa.noarea.toml` config file to generate mapfiles without land areas. Or even use `./noaa/config.enc.noaa.noarea.compact.toml` config file that will generate mapfiles only with features from [layer groups](#layer-groups) that you're going to use (see `layer_groups_to_keep` option) - this can make mapfiles much smaller and faster to read and parse by MapServer.
+**NOTE.** You can use `./noaa/config.enc.noaa.compact.toml` config file that will generate mapfiles only with features from [layer groups](#layer-groups) that you're going to use (see `layer_groups_to_keep` option) - this can make mapfiles much smaller and faster to read and parse by MapServer.
 
 In the end you should have the following folders created in `/home/noaa-enc` directory:
 
@@ -78,13 +78,13 @@ docker compose -f /<absolute-path-to-your-docker-compose-file> up -d
 And access the map via URL like this:
 
 ```
-http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true&STYLES=&CRS=EPSG%3A3857&WIDTH=1345&HEIGHT=574&BBOX=-13877171.677492695,6167575.677658709,-13864320.702112267,6173060.034438163&LAYERS=DEPTHS,SEABED,SIGNALS,SPECIAL&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
+http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true&STYLES=&CRS=EPSG%3A3857&WIDTH=1345&HEIGHT=574&BBOX=-13877171.677492695,6167575.677658709,-13864320.702112267,6173060.034438163&LAYERS=LAND_1,DEPTHS_1,SEABED_1,SIGNALS_1,SPECIAL_1,LAND_2,DEPTHS_2,SEABED_2,SIGNALS_2,SPECIAL_2,LAND_3,DEPTHS_3,SEABED_3,SIGNALS_3,SPECIAL_3&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
 ```
 
 Or if you want to use tile mode:
 
 ```
-http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&MODE=tile&TILEMODE=gmap&TILE=2211+3437+13&TILESIZE=256+256&LAYERS=DEPTHS+SEABED+SIGNALS+SPECIAL&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
+http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&MODE=tile&TILEMODE=gmap&TILE=2211+3437+13&TILESIZE=256+256&LAYERS=LAND_1+DEPTHS_1+SEABED_1+SIGNALS_1+SPECIAL_1+LAND_2+DEPTHS_2+SEABED_2+SIGNALS_2+SPECIAL_2+LAND_3+DEPTHS_3+SEABED_3+SIGNALS_3+SPECIAL_3&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
 ```
 
 As you can see:
@@ -456,6 +456,7 @@ Layers of generated mapfiles are separated into groups:
 - `BEACH` - Beach and land related objects.
 - `BRIDGES` - Bridges.
 - `DEPTHS` - Depths, currents, etc.
+- `LAND` - Land area.
 - `SEABED` - Seabed, obstructions, pipelines.
 - `SIGNALS` - Buoys, beacons, lights, fog signals, radar.
 - `SPECIAL` - Special areas.
@@ -470,7 +471,17 @@ Layers of generated mapfiles are separated into groups:
 
 They are defined in [layer_groups.py](chart-installation/generate_map_files/mapgen/layer_groups.py) file.
 
-You can use and combine them in the `LAYERS` query parameter when you request the map from your MapServer (e.g. `LAYERS=DEPTHS,SEABED,COMMON`).
+When mapfiles are generated their layers will be marked with corresponding group name and an index of navigational purpose (e.g. `DEPTHS_4`, `SEABED_3`, etc.).
+
+You can use and combine them in the `LAYERS` query parameter when you request the map from your MapServer (e.g. `LAYERS=LAND_1,DEPTHS_1,SEABED_1,LAND_2,DEPTHS_2,SEABED_2,...`).
+
+**IMPORTANT!** Layer groups order matters!
+
+- First of all, layer groups should be ordered by their navigational purpose indexes in ascending order (e.g. `DEPTHS_1,DEPTHS_2,DEPTHS_3...`). There may be the cases when you have data for lower zoom levels (e.g. `DEPTHS_1`) but not for the higher ones (e.g. `DEPTHS_2`). In this case when you'll request data for the higher zoom level you will continue to see data for the lower zoom level(s). But if you have data for the higher zoom level it will be placed on top of layers for previous zoom levels.
+
+- Layer groups with filled areas should go first (e.g. `LAND_1,DEPTHS_1`). If you put layer groups with labels and symbols first (e.g. `SEABED_1,DEPTHS_1`) you won't see them because they will be covered by the filled areas from the layer groups that go after them.
+
+- When you request data from multiple zoom levels the lower ones may have less accurate data. When layers for higher zoom levels will be rendered they will cover the layers for lower zoom levels, but some areas and elements from lower zoom levels may still be seen through the top layers. In order to get rid of this issue you should use `LAND` layer groups in your request - the land area will cover all those excess areas of data from lower zoom levels with filled polygon.
 
 ## CGI substitutes
 

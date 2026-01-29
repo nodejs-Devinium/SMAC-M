@@ -10,6 +10,7 @@ from string import Template
 from osgeo import ogr
 
 from .chartsymbols import ChartSymbols
+from .layer_groups import get_layer_groups
 from utils import dirutils
 
 
@@ -230,7 +231,8 @@ def process_all_layers(data, target, config, point_table='Simplified',
             input_file = config + '/layer_rules/layer_groups.csv'
             process_layer_colors(layer, color_table, input_file,
                                  msd[layer], data, target, chartsymbols,
-                                 shp_types, shp_fields)
+                                 shp_types, shp_fields,
+                                 layer_groups_to_keep)
 
 
 def get_layer_mapfile(layer, feature, group, color_table, msd):
@@ -319,7 +321,8 @@ def get_metadata_name(s57objectname):
 
 
 def process_layer_colors(layer, color_table, input_file, msd, data, target,
-                         chartsymbols=None, shp_types={}, shp_fields={}):
+                         chartsymbols=None, shp_types={}, shp_fields={},
+                         layer_groups_to_keep=None):
     #  Reimplementation of the shell script of the same name
 
     # Create directory
@@ -387,10 +390,34 @@ def process_layer_colors(layer, color_table, input_file, msd, data, target,
 
     final_file.write("""
 #
+#  Dummy layers for all layer groups to prevent errors if these groups
+#  don't have visible layers at this navigation layer
+#
+    """)
+
+    layer_groups = get_layer_groups()
+    for layer_group in layer_groups:
+        if layer_groups_to_keep is not None and \
+                layer_group not in layer_groups_to_keep:
+            continue
+
+        final_file.write("""
+LAYER
+    NAME "{layer_group}_DUMMY_LAYER_{layer}"
+    GROUP "{layer_group}_{layer}"
+    TEMPLATE blank.html
+    TYPE Polygon
+    STATUS ON
+END
+        """.format(layer_group=layer_group, layer=layer))
+
+    final_file.write("""
+#
 #  Dummy layer to flush the label cache
 #
+
 LAYER
-   NAME "force_label_draw_CL${CL}"
+   NAME "force_label_draw_CL%s"
    GROUP %s
    TYPE POINT
    PROCESSING FORCE_DRAW_LABEL_CACHE=FLUSH
@@ -406,5 +433,6 @@ LAYER
       "wms_feature_mime_type" "text/html"
    END
 END
-    """ % get_navigation_level(layer))
+    """ % (layer, get_navigation_level(layer)))
+
     final_file.close()

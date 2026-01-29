@@ -185,12 +185,13 @@ class SubLayer:
     @property
     def mapfile(self):
         parent = self.layer_parent
+        layer_group = layer_groups.get_layer_group(parent.feature_name)
         return templates.mapfile_layer_template.format(
             layer=parent.layer_level,
             feature=parent.feature_name,
             metadata_name=parent.metadata_name,
             geomtype_humanreadable=self.get_human_readable_geomtype(),
-            group=layer_groups.get_layer_group(parent.feature_name),
+            group='{0}_{1}'.format(layer_group, parent.layer_level),
             type=self.geom_type,
             max_scale_denom=parent.msd,
             data=parent.data,

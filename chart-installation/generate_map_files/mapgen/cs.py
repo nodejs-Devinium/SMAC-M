@@ -647,6 +647,7 @@ def SOUNDG(lookup_type, name):
             SIZE 12
             ANTIALIAS TRUE
             FORCE GROUP
+            BUFFER 7
         END
 
         LABEL
@@ -660,6 +661,7 @@ def SOUNDG(lookup_type, name):
             SIZE 11
             ANTIALIAS TRUE
             FORCE GROUP
+            BUFFER 7
         END
 
         LABEL
@@ -673,6 +675,7 @@ def SOUNDG(lookup_type, name):
             SIZE 10
             ANTIALIAS TRUE
             FORCE GROUP
+            BUFFER 7
         END
     '''
 
@@ -685,7 +688,7 @@ def SOUNDG(lookup_type, name):
             # COLOR 136 152 139
             SIZE 12
             ANTIALIAS TRUE
-            BUFFER 3
+            BUFFER 7
         END
     '''
 
