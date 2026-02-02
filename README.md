@@ -310,19 +310,48 @@ python3 chart-installation/generate_map_files/generate_map_config.py configfile.
 By default, Maximum scale visibility can be adjust by editing this file:
 ./chart-installation/generate_map_files/resources/rules/layer_rules/layer_msd.csv
 
-|Navigation Level|Max Scale|
-|1|10000000|
-|2|5000000|
-|3|1000000|
-|4|500000|
-|5|100000|
-|6|50000|
+```
+| Navigation Level | Max Scale |
+|                1 | 15000000  |
+|                2 | 2000000   |
+|                3 | 500000    |
+|                4 | 110000    |
+|                5 | 28000     |
+|                6 | 4000      |
+```
 
 Be award if you change default maxscale visibility, you may need to adjust sounding
 points max scale shift in your configuration variable file (`config.toml`)
 
 ```
 sounding_maxscale_shift = 0.4
+```
+
+In tile mode (`gmap`) the following zoom level/scale denominator ratios will work:
+
+```
+| Zoom Level | Scale Denominator | Navigation Levels |
+|          0 | 443744273         | -                 |
+|          1 | 221872137         | -                 |
+|          2 | 110936069         | -                 |
+|          3 | 55468035          | -                 |
+|          4 | 27734018          | -                 |
+|          5 | 13867009          | 1                 |
+|          6 | 6933505           | 1                 |
+|          7 | 3466753           | 1                 |
+|          8 | 1733377           | 1-2               |
+|          9 | 866689            | 1-2               |
+|         10 | 433345            | 1-3               |
+|         11 | 216673            | 1-3               |
+|         12 | 108337            | 1-4               |
+|         13 | 54169             | 1-4               |
+|         14 | 27085             | 1-5               |
+|         15 | 13543             | 1-5               |
+|         16 | 6772              | 1-5               |
+|         17 | 3386              | 1-6               |
+|         18 | 1693              | 1-6               |
+|         19 | 847               | 1-6               |
+|         20 | 424               | 1-6               |
 ```
 
 #### Enhanced data mapfile limitations
