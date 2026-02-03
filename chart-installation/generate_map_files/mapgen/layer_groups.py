@@ -49,7 +49,6 @@ _layer_groups = {
     # LAND
     "LNDARE": "LAND", # Land area
     # SEABED
-    "CANALS": "SPECIAL", # Canal
     "CBLARE": "SEABED", # Cable area
     "CBLOHD": "SEABED", # Cable, overhead
     "CBLSUB": "SEABED", # Cable, submarine
@@ -81,6 +80,7 @@ _layer_groups = {
     "RDOSTA": "SIGNALS", # Radio station
     "RTPBCN": "SIGNALS", # Radar transponder beacon
     # SPECIAL
+    "CANALS": "SPECIAL", # Canal
     "CHKPNT": "SPECIAL", # Checkpoint
     "CONZNE": "SPECIAL", # Contiguous zone
     "COSARE": "SPECIAL", # Continental shelf area

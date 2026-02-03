@@ -94,8 +94,7 @@ def create_legend_files(template_path, themes_path, map_path, fonts_path,
 def generate_basechart_config(data_path, map_path, rule_set_path, resource_dir,
                               force_overwrite, debug, point_table, area_table,
                               displaycategory, chartsymbols,
-                              excluded_lookups, excluded_lookup_labels,
-                              layer_groups_to_keep,
+                              layers_and_lookups, symbols_resize,
                               maxscale_shift, symbol_size_override):
 
     # Generate new map files
@@ -105,8 +104,7 @@ def generate_basechart_config(data_path, map_path, rule_set_path, resource_dir,
         shapepath = data_path
         process_all_layers(data_path, map_path, rule_set_path, point_table,
                            area_table, displaycategory, chartsymbols,
-                           excluded_lookups, excluded_lookup_labels,
-                           layer_groups_to_keep,
+                           layers_and_lookups, symbols_resize,
                            maxscale_shift, symbol_size_override)
 
     fonts_path = os.path.join("./fonts", "fontset.lst")
@@ -157,8 +155,7 @@ def get_colors(color_table):
 def process_all_layers(data, target, config, point_table='Simplified',
                        area_table='Plain', displaycategory=None,
                        chartsymbols_file=None,
-                       excluded_lookups=None, excluded_lookup_labels=None,
-                       layer_groups_to_keep=None,
+                       layers_and_lookups={}, symbols_resize=None,
                        maxscale_shift=None,
                        symbol_size_override=None):
 
@@ -169,9 +166,8 @@ def process_all_layers(data, target, config, point_table='Simplified',
     if chartsymbols_file:
         chartsymbols = ChartSymbols(
             chartsymbols_file, point_table, area_table, displaycategory,
-            excluded_lookups=excluded_lookups,
-            excluded_lookup_labels=excluded_lookup_labels,
-            layer_groups_to_keep=layer_groups_to_keep,
+            layers_and_lookups=layers_and_lookups,
+            symbols_resize=symbols_resize,
             symbol_size_override=symbol_size_override,
             maxscale_shift=maxscale_shift,
         )
@@ -218,6 +214,10 @@ def process_all_layers(data, target, config, point_table='Simplified',
     #
     #  Process all color themes
     #
+
+    layer_groups_to_keep = layers_and_lookups.get('layer_groups_to_keep', [])
+    if len(layer_groups_to_keep) == 0:
+        layer_groups_to_keep = None;
 
     for color in os.listdir(config + '/color_tables/'):
         print("Loading " + color)

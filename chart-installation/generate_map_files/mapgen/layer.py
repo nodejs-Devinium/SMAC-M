@@ -103,7 +103,8 @@ class Layer(LayerBase):
             styleitems = lookup.get_styleitems(chartsymbols,
                                                self.feature_name,
                                                self.geom_type.value,
-                                               fields)
+                                               fields,
+                                               self.layer_level)
             for geom_type, styleitem in styleitems.items():
                 if styleitem:
                     classes[GeomType(geom_type)].append(
@@ -129,7 +130,7 @@ class Layer(LayerBase):
             # depth_field = 'Min:DEPTH'
             depth_field = 'DEPTH'
             max_distance = 50 if int(self.layer_level) <= 3 else 30
-            buffer = 10 if int(self.layer_level) <= 3 else 1
+            buffer = 10
             return templates.cluster_instruction.format(max_distance,
                                                         "ellipse",
                                                         buffer,

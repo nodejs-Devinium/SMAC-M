@@ -139,9 +139,9 @@ if __name__ == '__main__':
         print('topmark_type must be either floating or rigid')
         sys.exit(2)
 
-    excluded_lookups = args.config.get('excluded_lookups', None)
-    excluded_lookup_labels = args.config.get('excluded_lookup_labels', None)
-    layer_groups_to_keep = args.config.get('layer_groups_to_keep', None)
+    layers_and_lookups = args.config.get('layers_and_lookups', None)
+
+    symbols_resize = args.config.get('symbols_resize', None)
 
     maxscale_shift = args.config.get('maxscale_shift', None)
 
@@ -181,8 +181,7 @@ if __name__ == '__main__':
                                   RESOURCES_PATH, args.force,
                                   debug, point_table, area_table,
                                   displaycategory, chartsymbols,
-                                  excluded_lookups, excluded_lookup_labels,
-                                  layer_groups_to_keep,
+                                  layers_and_lookups, symbols_resize,
                                   maxscale_shift, symbol_size_override)
     else:
         print('Data format "{}" has not yet been ported to the configuration '

@@ -2,9 +2,16 @@ point_table = "Paper"
 area_table = "Plain"
 displaycategory = "Standard,Other"
 debug = false
+
+[layers_and_lookups]
 excluded_lookups = ["M_QUAL","LNDRGN","BUAARE","RIVERS","LAKARE","LIGHTS"]
 excluded_lookup_labels = ["BCNCAR","BCNISD","BCNLAT","BCNSAW","BCNSPP","BOYCAR","BOYINB","BOYISD","BOYLAT","BOYSAW","BOYSPP","BRIDGE","FOGSIG","LNDARE","LIGHTS","RADRNG","RADSTA","RDOCAL","RDOSTA","RTPBCN"]
 layer_groups_to_keep = ["LAND","BRIDGES","DEPTHS","SEABED","SIGNALS","SPECIAL"]
+
+[symbols_resize]
+layer_levels_to_resize = ["3","4","5","6"]
+lookups_to_resize = ["BCNCAR","BCNISD","BCNLAT","BCNSAW","BCNSPP","BOYCAR","BOYINB","BOYISD","BOYLAT","BOYSAW","BOYSPP","FOGSIG","LIGHTS","RADRNG","RADSTA","RDOCAL","RDOSTA","RTPBCN"]
+size_to_set = 22
 
 [paths]
 chartsymbols = "../chart-installation/generate_map_files/resources/chartsymbols/chartsymbols_S57.xml"

@@ -2,6 +2,8 @@ point_table = "Paper"
 area_table = "Plain"
 displaycategory = "Standard"
 debug = false
+
+[layers_and_lookups]
 excluded_lookups = ["M_QUAL","LNDARE","LNDRGN","BUAARE","RIVERS","LAKARE"] # List of lookups to e
 
 [maxscale_shift]

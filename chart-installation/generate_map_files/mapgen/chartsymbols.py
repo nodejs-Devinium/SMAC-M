@@ -48,7 +48,11 @@ class ChartSymbols:
     excluded_lookups = ['M_QUAL']
     # excluded_lookups = ExclusiveSet('LIGHTS BCNLAT'.split())
     excluded_lookup_labels = []
-    layer_groups_to_keep = None
+    layer_groups_to_keep = []
+
+    layer_levels_to_resize_symbols = []
+    lookups_to_resize_symbols = []
+    symbols_size_to_set_on_resize = None
 
     symbol_size_override = {}
     maxscale_shift = {}
@@ -57,20 +61,22 @@ class ChartSymbols:
 
     def __init__(self, file, point_table='Simplified', area_table='Plain',
                  displaycategory=None, color_table='DAY_BRIGHT',
-                 excluded_lookups=None, excluded_lookup_labels=None,
-                 layer_groups_to_keep=None,
+                 layers_and_lookups={}, symbols_resize={},
                  symbol_size_override=None, maxscale_shift=None):
         if not os.path.isfile(file):
             raise Exception('chartsymbol file do not exists')
 
-        if excluded_lookups is not None:
-            self.excluded_lookups = excluded_lookups
+        self.excluded_lookups = layers_and_lookups.get('excluded_lookups', self.excluded_lookups)
 
-        if excluded_lookup_labels is not None:
-            self.excluded_lookup_labels = excluded_lookup_labels
+        self.excluded_lookup_labels = layers_and_lookups.get('excluded_lookup_labels', [])
 
-        if layer_groups_to_keep is not None and len(layer_groups_to_keep) > 0:
-            self.layer_groups_to_keep = layer_groups_to_keep;
+        self.layer_groups_to_keep = layers_and_lookups.get('layer_groups_to_keep', [])
+        if len(self.layer_groups_to_keep) == 0:
+            self.layer_groups_to_keep = None;
+
+        self.layer_levels_to_resize_symbols = symbols_resize.get('layer_levels_to_resize', [])
+        self.lookups_to_resize_symbols = symbols_resize.get('lookups_to_resize', [])
+        self.symbols_size_to_set_on_resize = symbols_resize.get('size_to_set', None)
 
         if symbol_size_override is not None:
             self.symbol_size_override = symbol_size_override

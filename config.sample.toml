@@ -3,6 +3,8 @@ point_table = "Simplified"    # Style table used for point features (Simplified 
 area_table = "Plain"          # Style table used for area features (Plain or Symbolized)
 displaycategory = "Standard"  # Comma-separated list of categories of symbols displayed (Standard,Other,Displaybase)
 topmark_type = "rigid"        # Type of top marks to display
+
+[layers_and_lookups]
 excluded_lookups = ["M_QUAL"] # List of lookups to exclude from the mapfiles
 
 # MAXSCALEDENOM downgrade shift.  All layers have default navigation level

@@ -29,7 +29,7 @@ class Command:
     def set_command_name(self, command):
         self.command = command
 
-    def __call__(self, chartsymbols, layer, geom_type, fields):
+    def __call__(self, chartsymbols, layer, geom_type, fields, layer_level):
         warnings.warn('Command not implemented: {}'.format(self.command),
                       NotImplementedWarning)
         return ''
@@ -71,7 +71,7 @@ class LS(Command):
         self.width = width
         self.color = color
 
-    def __call__(self, chartsymbols, layer, geom_type, fields):
+    def __call__(self, chartsymbols, layer, geom_type, fields, layer_level):
         style = '''
         STYLE
             COLOR {color}
@@ -124,7 +124,7 @@ class TE(Command):
         self.display = display
         super().__init__()
 
-    def __call__(self, chartsymbols, layer, geom_type, fields):
+    def __call__(self, chartsymbols, layer, geom_type, fields, layer_level):
         text = re.sub(r'(%[^ ]*[a-z])[^a-z]', self.get_label_text, self.format)
         if ' + ' in text:
             text = '({})'.format(text)
@@ -207,16 +207,22 @@ class SY(Command):
             self.rot_field = rot
             self.rot = '[{}_CAL]'.format(rot)
 
-    def get_symbol_size(self, sym_size_overwrite):
-        # NOTE: layers are case senssitive
-        for prefix, size in sym_size_overwrite.items():
+    def get_symbol_size(self, chartsymbols, layer_name, layer_level):
+        # NOTE: layers are case sensitive
+        for prefix, size in chartsymbols.symbol_size_override.items():
             if self.symbol.startswith(prefix):
                 return 'SIZE {size}'.format(size=size)
 
-        # Layer not funded, simply return empty string
+        if chartsymbols.symbols_size_to_set_on_resize is not None and \
+                layer_level in chartsymbols.layer_levels_to_resize_symbols and \
+                layer_name in chartsymbols.lookups_to_resize_symbols:
+            return 'SIZE {size}'.format(size=chartsymbols.symbols_size_to_set_on_resize)
+
+        # Simply return empty string
         return ''
 
-    def __call__(self, chartsymbols, layer, geom_type, fields):
+
+    def __call__(self, chartsymbols, layer, geom_type, fields, layer_level):
         # OFFSET
         x = 0
         y = 0
@@ -228,8 +234,8 @@ class SY(Command):
         if self.symbol == 'FOGSIG01':
             x = -15
 
-        # some pixmap symbols are too big or too small
-        size = self.get_symbol_size(chartsymbols.symbol_size_override)
+        # some pixmap symbols are too big or too small or need to be resized
+        size = self.get_symbol_size(chartsymbols, layer, layer_level)
 
         if self.symbol in chartsymbols.symbols_def:
             symbol_name = self.symbol
@@ -269,7 +275,7 @@ class LC(Command):
     def __init__(self, style):
         self.symbol = style
 
-    def __call__(self, chartsymbols, layer, geom_type, fields):
+    def __call__(self, chartsymbols, layer, geom_type, fields, layer_level):
         style = chartsymbols.line_symbols[self.symbol].as_style(
             chartsymbols.color_table)
         if geom_type == 'POLYGON':
@@ -285,7 +291,7 @@ class AC(Command):
         # MapServer uses Opacity, OpenCPN uses trnasparency
         self.opacity = (4 - int(transparency)) * 25
 
-    def __call__(self, chartsymbols, layer, geom_type, fields):
+    def __call__(self, chartsymbols, layer, geom_type, fields, layer_level):
         return """
         STYLE
             COLOR {}
@@ -299,7 +305,7 @@ class AP(Command):
     def __init__(self, pattern):
         self.pattern = pattern
 
-    def __call__(self, chartsymbols, layer, geom_type, fields):
+    def __call__(self, chartsymbols, layer, geom_type, fields, layer_level):
         return chartsymbols.area_symbols[self.pattern].as_style(
             chartsymbols.color_table)
 
@@ -309,7 +315,7 @@ class CS(Command):
     def __init__(self, proc):
         self.proc = proc
 
-    def __call__(self, chartsymbols, layer, geom_type, fields):
+    def __call__(self, chartsymbols, layer, geom_type, fields, layer_level):
         warnings.warn(
             'Symproc left in lookup: {}'.format((self.proc, layer)),
             NotImplementedWarning)
@@ -329,5 +335,5 @@ class _MS(Command):
         # were any
         self.style = ','.join(style)
 
-    def __call__(self, chartsymbols, layer, geom_type, fields):
+    def __call__(self, chartsymbols, layer, geom_type, fields, layer_level):
         return self.style.format(color=chartsymbols.color_table)
