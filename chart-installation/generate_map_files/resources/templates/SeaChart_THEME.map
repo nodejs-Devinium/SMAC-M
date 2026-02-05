@@ -42,13 +42,13 @@ MAP
         END
 
         VALIDATION
-            'q_shallow_depth' '^[0-9]+$$'
+            'q_shallow_depth' '^\d+\.?\d*$$'
             'default_q_shallow_depth' '2'
 
-            'q_safety_depth' '^[0-9]+$$'
+            'q_safety_depth' '^\d+\.?\d*$$'
             'default_q_safety_depth' '30'
 
-            'q_deep_depth' '^[0-9]+$$'
+            'q_deep_depth' '^\d+\.?\d*$$'
             'default_q_deep_depth' '30'
 
             'q_depth_units' '^meters|feet$$'
