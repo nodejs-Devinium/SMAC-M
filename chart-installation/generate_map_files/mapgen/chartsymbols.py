@@ -36,6 +36,7 @@ class Color:
 class ChartSymbols:
 
     color_table = {}  # type: dict
+    colors_override = None
 
     symbols_def = {}
 
@@ -61,10 +62,13 @@ class ChartSymbols:
 
     def __init__(self, file, point_table='Simplified', area_table='Plain',
                  displaycategory=None, color_table='DAY_BRIGHT',
+                 colors_override=None,
                  layers_and_lookups={}, symbols_resize={},
                  symbol_size_override=None, maxscale_shift=None):
         if not os.path.isfile(file):
             raise Exception('chartsymbol file do not exists')
+
+        self.colors_override = colors_override
 
         self.excluded_lookups = layers_and_lookups.get('excluded_lookups', self.excluded_lookups)
 
@@ -210,7 +214,10 @@ class ChartSymbols:
                     command = get_command(part)
                     if isinstance(command, CS):
                         details = command.proc
-                        lookups @= lookups_from_cs(details, lookup_type, name)
+                        lookups @= lookups_from_cs(
+                            details, lookup_type, name,
+                            self.color_table, self.colors_override,
+                        )
 
                     else:
                         lookups.add_instruction(command)
@@ -261,14 +268,14 @@ class ChartSymbols:
                      metadata_name)
 
     def get_poly_mapfile(self, layer, feature, group, msd, fields,
-                         metadata_name):
+                         metadata_name, src_feature=None, cleanup_color=None):
 
         # ajusting max scale for layer pointed in config file by user.
         msd_verified = self.get_maxscale_shift_layer(feature, msd)
 
         return Layer(layer, feature, 'POLYGON', group, msd_verified,
                      fields, self.polygon_lookups.get(feature, []), self,
-                     metadata_name)
+                     metadata_name, src_feature, cleanup_color)
 
 
 class AllInclusive:

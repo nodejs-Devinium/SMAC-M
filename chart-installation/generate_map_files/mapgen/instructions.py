@@ -72,6 +72,9 @@ class LS(Command):
         self.color = color
 
     def __call__(self, chartsymbols, layer, geom_type, fields, layer_level):
+        color = self.color
+        if ' ' not in color:
+            color = chartsymbols.color_table[self.color].rgb
         style = '''
         STYLE
             COLOR {color}
@@ -81,7 +84,7 @@ class LS(Command):
             {pattern}
         END
             '''.format(
-                color=chartsymbols.color_table[self.color].rgb,
+                color=color,
                 width=self.units(self.width),
                 pattern=self.patterns.get(self.pattern, ''),
             )

@@ -2,8 +2,9 @@
 #
 # - `BEACH` - Beach and land related objects.
 # - `BRIDGES` - Bridges.
-# - `DEPTHS` - Depths, currents, etc.
-# - `LAND` - Land area.
+# - `DEPTH_AREA` - Depth area (with filled polygons).
+# - `DEPTH_DATA` - Depth contour and sounding.
+# - `LAND` - Land area (with filled polygons).
 # - `SEABED` - Seabed, obstructions, pipelines.
 # - `SIGNALS` - Buoys, beacons, lights, fog signals, radar.
 # - `SPECIAL` - Special areas.
@@ -13,6 +14,10 @@
 # - `COMMON` - Common layers (should be used with all other layers if presented).
 #
 # - `BROKEN` - Layers that cause errors because of missing attributes, etc.
+#
+# - `CLEANUP` - A group of synthetic layers that should be used to clear
+#               the remainings from rendered layers with smaller navigational
+#               purpose indexes.
 #
 # - `MISC` - Everything else.
 #
@@ -42,10 +47,11 @@ _layer_groups = {
     # BRIDGES
     "BRIDGE": "BRIDGES", # Bridge
     "PONTON": "BRIDGES", # Pontoon
-    # DEPTHS
-    "DEPARE": "DEPTHS", # Depth area
-    "DEPCNT": "DEPTHS", # Depth contour
-    "SOUNDG": "DEPTHS", # Sounding
+    # DEPTH_AREA
+    "DEPARE": "DEPTH_AREA", # Depth area
+    # DEPTH_DATA
+    "DEPCNT": "DEPTH_DATA", # Depth contour
+    "SOUNDG": "DEPTH_DATA", # Sounding
     # LAND
     "LNDARE": "LAND", # Land area
     # SEABED
@@ -104,6 +110,9 @@ _layer_groups = {
     # BROKEN
     "CTRPNT": "BROKEN", # Control point (HEIGHT)
     "SBDARE": "BROKEN", # Seabed area (NATSUR)
+    # CLEANUP (a group of synthetic layers)
+    "CLNDEP": "CLEANUP", # Cleanup layer based on DEPARE polygon data
+    "CLNLND": "CLEANUP", # Cleanup layer based on LNDARE polygon data
 }
 
 

@@ -30,7 +30,8 @@
 			<color name="SNDG2" r="7" g="7" b="7"/>
 			<color name="DEPSC" r="82" g="90" b="92"/>
 			<color name="DEPCN" r="125" g="137" b="140"/>
-			<color name="DEPDW" r="212" g="234" b="238"/>
+			<!--color name="DEPDW" r="212" g="234" b="238"/-->
+			<color name="DEPDW" r="197" g="224" b="238"/>
 			<color name="DEPMD" r="186" g="213" b="225"/>
 			<color name="DEPMS" r="152" g="197" b="242"/>
 			<color name="DEPVS" r="115" g="182" b="239"/>

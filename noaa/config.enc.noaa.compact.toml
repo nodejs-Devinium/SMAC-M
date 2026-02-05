@@ -3,10 +3,15 @@ area_table = "Plain"
 displaycategory = "Standard,Other"
 debug = false
 
+[colors_override]
+cleanup = "201 185 122"
+depth_contours = ["192 86 90","238 233 235"]
+sounding = ["192 45 58","255 255 255"]
+
 [layers_and_lookups]
 excluded_lookups = ["M_QUAL","LNDRGN","BUAARE","RIVERS","LAKARE","LIGHTS"]
 excluded_lookup_labels = ["BCNCAR","BCNISD","BCNLAT","BCNSAW","BCNSPP","BOYCAR","BOYINB","BOYISD","BOYLAT","BOYSAW","BOYSPP","BRIDGE","FOGSIG","LNDARE","LIGHTS","RADRNG","RADSTA","RDOCAL","RDOSTA","RTPBCN"]
-layer_groups_to_keep = ["LAND","BRIDGES","DEPTHS","SEABED","SIGNALS","SPECIAL"]
+layer_groups_to_keep = ["BRIDGES","DEPTH_AREA","DEPTH_DATA","SEABED","SIGNALS"]
 
 [symbols_resize]
 layer_levels_to_resize = ["3","4","5","6"]

@@ -139,6 +139,8 @@ if __name__ == '__main__':
         print('topmark_type must be either floating or rigid')
         sys.exit(2)
 
+    colors_override = args.config.get('colors_override', None)
+
     layers_and_lookups = args.config.get('layers_and_lookups', None)
 
     symbols_resize = args.config.get('symbols_resize', None)
@@ -181,6 +183,7 @@ if __name__ == '__main__':
                                   RESOURCES_PATH, args.force,
                                   debug, point_table, area_table,
                                   displaycategory, chartsymbols,
+                                  colors_override,
                                   layers_and_lookups, symbols_resize,
                                   maxscale_shift, symbol_size_override)
     else:

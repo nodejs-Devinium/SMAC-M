@@ -64,14 +64,16 @@ class Layer(LayerBase):
     rot_field = None
 
     def __init__(self, layer_level, feature_name, geom_type, group, msd,
-                 fields, lookups, chartsymbols, metadata_name):
+                 fields, lookups, chartsymbols, metadata_name,
+                 src_feature=None, cleanup_color=None):
         self.layer_level = layer_level
         self.feature_name = feature_name
         self.geom_type = GeomType(geom_type)
         self.group = group
         self.msd = msd
         self.metadata_name = metadata_name
-        self.base = "CL{}_{}_{}".format(layer_level, feature_name,
+        self.cleanup_color = cleanup_color
+        self.base = "CL{}_{}_{}".format(layer_level, src_feature or feature_name,
                                         self.geom_type.filename)
         if lookups:
             self.priority = max(
@@ -92,6 +94,18 @@ class Layer(LayerBase):
             GeomType.Point: [],
             GeomType.Polygon: [],
         }
+
+        # handle synthetic "cleanup" features - CLNDEP (based on DEPARE data)
+        # and CLNLND (based on LNDARE data)
+        if self.feature_name.startswith('CLN'):
+            if self.cleanup_color is None:
+                return []
+
+            return [
+                SubLayer(self, GeomType.Polygon, [
+                    templates.cleanup_class_template.format(self.cleanup_color)
+                ])
+            ]
 
         for lookup in lookups:
             self.rot_field = self.rot_field or lookup.rot_field

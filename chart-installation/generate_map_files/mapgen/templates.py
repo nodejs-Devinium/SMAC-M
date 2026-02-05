@@ -193,3 +193,13 @@ class_template = """
         {1}
     END
 """
+
+
+cleanup_class_template = """
+    CLASS
+        STYLE
+            COLOR {0}
+            OPACITY 100
+        END
+    END
+"""

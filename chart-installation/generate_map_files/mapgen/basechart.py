@@ -94,6 +94,7 @@ def create_legend_files(template_path, themes_path, map_path, fonts_path,
 def generate_basechart_config(data_path, map_path, rule_set_path, resource_dir,
                               force_overwrite, debug, point_table, area_table,
                               displaycategory, chartsymbols,
+                              colors_override,
                               layers_and_lookups, symbols_resize,
                               maxscale_shift, symbol_size_override):
 
@@ -104,6 +105,7 @@ def generate_basechart_config(data_path, map_path, rule_set_path, resource_dir,
         shapepath = data_path
         process_all_layers(data_path, map_path, rule_set_path, point_table,
                            area_table, displaycategory, chartsymbols,
+                           colors_override,
                            layers_and_lookups, symbols_resize,
                            maxscale_shift, symbol_size_override)
 
@@ -155,6 +157,7 @@ def get_colors(color_table):
 def process_all_layers(data, target, config, point_table='Simplified',
                        area_table='Plain', displaycategory=None,
                        chartsymbols_file=None,
+                       colors_override=None,
                        layers_and_lookups={}, symbols_resize=None,
                        maxscale_shift=None,
                        symbol_size_override=None):
@@ -166,6 +169,7 @@ def process_all_layers(data, target, config, point_table='Simplified',
     if chartsymbols_file:
         chartsymbols = ChartSymbols(
             chartsymbols_file, point_table, area_table, displaycategory,
+            colors_override=colors_override,
             layers_and_lookups=layers_and_lookups,
             symbols_resize=symbols_resize,
             symbol_size_override=symbol_size_override,
@@ -231,6 +235,7 @@ def process_all_layers(data, target, config, point_table='Simplified',
             input_file = config + '/layer_rules/layer_groups.csv'
             process_layer_colors(layer, color_table, input_file,
                                  msd[layer], data, target, chartsymbols,
+                                 colors_override,
                                  shp_types, shp_fields,
                                  layer_groups_to_keep)
 
@@ -321,7 +326,8 @@ def get_metadata_name(s57objectname):
 
 
 def process_layer_colors(layer, color_table, input_file, msd, data, target,
-                         chartsymbols=None, shp_types={}, shp_fields={},
+                         chartsymbols=None, colors_override={},
+                         shp_types={}, shp_fields={},
                          layer_groups_to_keep=None):
     #  Reimplementation of the shell script of the same name
 
@@ -354,6 +360,9 @@ def process_layer_colors(layer, color_table, input_file, msd, data, target,
                         final_file.write(mapfile)
     else:
         layers = []
+
+        cleanup_color = colors_override.get('cleanup', None)
+
         for (base, dirs, filenames) in os.walk('{0}/{1}/'.format(data, layer)):
             for filename in filenames:
                 if filename.endswith('.shp'):
@@ -370,6 +379,20 @@ def process_layer_colors(layer, color_table, input_file, msd, data, target,
                     # we will push a readdable Group name based on Navigation
                     # level
                     group_layer = get_navigation_level(layer)
+
+                    # for DEPARE and LNDARE features we will add synthetic
+                    # "cleanup" layers that will render the same polygons as
+                    # usual but using `cleanup_color`
+                    if feature in ['DEPARE', 'LNDARE'] and geom == 'POLYGON':
+                        layers.append(
+                            chartsymbols.get_poly_mapfile(
+                                layer, '{0}{1}'.format('CLN', feature[0:3]),
+                                group_layer, msd,
+                                shp_fields[filename],
+                                '{0} [for cleanup]'.format(metadata_name),
+                                feature, cleanup_color)
+                        )
+
                     if geom == 'POINT':
                         layer_obj = chartsymbols.get_point_mapfile(
                             layer, feature, group_layer, msd,
@@ -396,9 +419,13 @@ def process_layer_colors(layer, color_table, input_file, msd, data, target,
     """)
 
     layer_groups = get_layer_groups()
+    groups_to_keep = layer_groups_to_keep
+    if groups_to_keep is not None:
+        groups_to_keep.append('CLEANUP') # always keep this group of synthetic layers
+
     for layer_group in layer_groups:
-        if layer_groups_to_keep is not None and \
-                layer_group not in layer_groups_to_keep:
+        if groups_to_keep is not None and \
+                layer_group not in groups_to_keep:
             continue
 
         final_file.write("""

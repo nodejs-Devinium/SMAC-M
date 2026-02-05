@@ -18,13 +18,16 @@ class NotImplementedWarning(UserWarning):
     pass
 
 
-def lookups_from_cs(detail, lookup_type, name):
+def lookups_from_cs(detail, lookup_type, name, color_table={}, colors_override={}):
 
     function_name = detail[:6]
     function = globals().get(function_name)
 
     if function:
-        lookups = function(lookup_type, name)
+        if function_name in ['DEPCNT', 'SOUNDG']:
+            lookups = function(lookup_type, name, color_table, colors_override)
+        else:
+            lookups = function(lookup_type, name)
     else:
         warnings.warn('Symproc not implemented: {}'.format(function_name),
                       NotImplementedWarning)
@@ -64,7 +67,7 @@ def DEPARE(lookup_type, name):
             rules=MSCompare('DRVAL1', safety_contour, MSCompare.OP.GE),
             instruction=AC('DEPMD')
         ),
-        Lookup(  # unused until safety_contour is configurable
+        Lookup(
             rules=MSCompare('DRVAL1', shallow_contour, MSCompare.OP.GE),
             instruction=AC('DEPMS')
         ),
@@ -91,16 +94,32 @@ def DEPARE(lookup_type, name):
     return rules
 
 
-def DEPCNT(lookup_type, name):
+def DEPCNT(lookup_type, name, color_table={}, colors_override={}):
+    safety_contour = '%q_safety_depth%'
+
+    colors_to_use = colors_override.get('depth_contours', [])
+    color_1 = colors_to_use[0] if len(colors_to_use) > 0 else 'DEPCN'
+    color_2 = colors_to_use[1] if len(colors_to_use) > 1 else color_1
+
     return [{
+        'rules': (
+            MSCompare('VALDCO', safety_contour, MSCompare.OP.LE)
+            & MSCompare('QUAPOS', '1', MSCompare.OP.GT)
+            & MSCompare('QUAPOS', '10', MSCompare.OP.LT)
+        ),
+        'instruction': LS('DASH', 1, color_1),
+    }, {
         'rules': (
             MSCompare('QUAPOS', '1', MSCompare.OP.GT)
             & MSCompare('QUAPOS', '10', MSCompare.OP.LT)
         ),
-        'instruction': LS('DASH', 1, 'DEPCN'),
+        'instruction': LS('DASH', 1, color_2),
+    }, {
+        'rules': MSCompare('VALDCO', safety_contour, MSCompare.OP.LE),
+        'instruction': LS('SOLD', 1, color_1),
     }, {
         'rules': MSNoRules(),
-        'instruction': LS('SOLD', 1, 'DEPCN'),
+        'instruction': LS('SOLD', 1, color_2),
     }]
 
 
@@ -632,18 +651,27 @@ def SLCONS(lookup_type, name):
     }]
 
 
-def SOUNDG(lookup_type, name):
+def SOUNDG(lookup_type, name, color_table={}, colors_override={}):
     # depth_field = 'Min:DEPTH'
     depth_field = 'DEPTH'
     safety_depth = '%q_safety_depth%'
+
+    colors_to_use = colors_override.get('sounding', [])
+    color_1 = colors_to_use[0] if len(colors_to_use) > 0 else 'DEPSC'
+    default_color_2 = color_1 if ' ' in color_1 else 'CHGRF'
+    color_2 = colors_to_use[1] if len(colors_to_use) > 1 else default_color_2
+
+    if ' ' not in color_1:
+        color_1 = color_table[color_1].rgb
+    if ' ' not in color_2:
+        color_2 = color_table[color_2].rgb
 
     meters_label_template = '''
         LABEL
             TEXT (round([{depth_field}]+(-0.5),1))
             TYPE TRUETYPE
             FONT sc
-            COLOR {{color[{colour}].rgb}}
-            # COLOR 136 152 139
+            COLOR {color}
             SIZE 12
             ANTIALIAS TRUE
             FORCE GROUP
@@ -656,8 +684,7 @@ def SOUNDG(lookup_type, name):
             OFFSET 13 7
             TYPE TRUETYPE
             FONT sc
-            COLOR {{color[{colour}].rgb}}
-            # COLOR 136 152 139
+            COLOR {color}
             SIZE 11
             ANTIALIAS TRUE
             FORCE GROUP
@@ -670,8 +697,7 @@ def SOUNDG(lookup_type, name):
             OFFSET 8 6
             TYPE TRUETYPE
             FONT sc
-            COLOR {{color[{colour}].rgb}}
-            # COLOR 136 152 139
+            COLOR {color}
             SIZE 10
             ANTIALIAS TRUE
             FORCE GROUP
@@ -684,8 +710,7 @@ def SOUNDG(lookup_type, name):
             TEXT (round(([{depth_field}]/0.3048)+(-0.5),1))
             TYPE TRUETYPE
             FONT sc
-            COLOR {{color[{colour}].rgb}}
-            # COLOR 136 152 139
+            COLOR {color}
             SIZE 12
             ANTIALIAS TRUE
             BUFFER 7
@@ -693,21 +718,21 @@ def SOUNDG(lookup_type, name):
     '''
 
     return [{
-        'instruction': _MS(meters_label_template.format(colour='DEPSC',
+        'instruction': _MS(meters_label_template.format(color=color_1,
                                                         depth_field=depth_field)),
         'rules': MSCompare('%q_depth_units%', 'meters') &
             MSCompare(depth_field, safety_depth, MSCompare.OP.LE)
     }, {
-        'instruction': _MS(meters_label_template.format(colour='CHGRF',
+        'instruction': _MS(meters_label_template.format(color=color_2,
                                                         depth_field=depth_field)),
         'rules': MSCompare('%q_depth_units%', 'meters')
     }, {
-        'instruction': _MS(feet_label_template.format(colour='DEPSC',
+        'instruction': _MS(feet_label_template.format(color=color_1,
                                                       depth_field=depth_field)),
         'rules': MSCompare('%q_depth_units%', 'feet') &
             MSCompare(depth_field, safety_depth, MSCompare.OP.LE)
     }, {
-        'instruction': _MS(feet_label_template.format(colour='CHGRF',
+        'instruction': _MS(feet_label_template.format(color=color_2,
                                                       depth_field=depth_field)),
         'rules': MSCompare('%q_depth_units%', 'feet')
     }]
