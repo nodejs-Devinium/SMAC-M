@@ -524,4 +524,4 @@ Mapfiles accept the following CGI substitutes as the query parameters:
 - `q_deep_depth` (in meters; default: `30`)
 - `q_depth_units` (`meters` or `feet`; default: `meters`)
 
-They are defined in [SeaChart_THEME.map](chart-installation/generate_map_files/resources/templates/SeaChart_THEME.map#L42-L54) file and used to generate layers for `DEPARE` and `SOUNDG` features.
+They are defined in [SeaChart_THEME.map](chart-installation/generate_map_files/resources/templates/SeaChart_THEME.map#L45-L57) file and used to generate layers for `DEPARE` and `SOUNDG` features.

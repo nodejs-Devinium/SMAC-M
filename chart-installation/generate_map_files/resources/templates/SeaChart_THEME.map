@@ -14,14 +14,15 @@ MAP
          'init=epsg:4326'
     END
 
+    ${IMAGECOLOR}
     IMAGETYPE png
     FONTSET '${FONTS_PATH}'
     SYMBOLSET "./symbols/symbols-day.map"
     OUTPUTFORMAT
         NAME 'png'
         DRIVER AGG/PNG
-        IMAGEMODE RGBA
-        TRANSPARENT ON
+        IMAGEMODE ${IMAGEMODE}
+        TRANSPARENT ${TRANSPARENT}
     END
 
     SHAPEPATH "${SHAPEPATH}"

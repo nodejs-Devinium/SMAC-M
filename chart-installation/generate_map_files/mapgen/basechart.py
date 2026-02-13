@@ -31,7 +31,9 @@ def generate_includes(includes_dir, theme):
     return "\n    ".join(includes)
 
 
-def get_dictionary(theme, map_path, fonts_path, debug_string):
+def get_dictionary(theme, map_path, fonts_path, debug_string, colors_override={}):
+    cleanup_color = colors_override.get('cleanup', None)
+    has_cleanup_color = cleanup_color is not None
     return {'THEME': theme,
             'HOST': 'http://localhost/cgi-bin/mapserv.fcgi',
             'DEBUG': debug_string,
@@ -39,7 +41,10 @@ def get_dictionary(theme, map_path, fonts_path, debug_string):
             'FONTS_PATH': fonts_path,
             'INCLUDES': generate_includes(os.path.join(map_path, "includes"),
                                           theme),
-            'SHAPEPATH': "../shape/"
+            'SHAPEPATH': "../shape/",
+            'IMAGECOLOR': 'IMAGECOLOR {0}'.format(cleanup_color) if has_cleanup_color else '',
+            'IMAGEMODE': 'RGB' if has_cleanup_color else 'RGBA',
+            'TRANSPARENT': 'OFF' if has_cleanup_color else 'ON',
             }
 
 
@@ -49,7 +54,7 @@ debug_template = '''CONFIG "MS_ERRORFILE" "/tmp/SeaChart_{0}.log"
 
 
 def create_capability_files(template_path, themes_path, map_path, fonts_path,
-                            use_debug, shapepath):
+                            use_debug, shapepath, colors_override):
     template = Template(
         open(os.path.join(template_path, "SeaChart_THEME.map"), 'r').read())
     for theme in os.listdir(themes_path):
@@ -60,7 +65,7 @@ def create_capability_files(template_path, themes_path, map_path, fonts_path,
         if use_debug:
             debug_string = str.format(debug_template, theme)
 
-        d = get_dictionary(theme, map_path, fonts_path, debug_string)
+        d = get_dictionary(theme, map_path, fonts_path, debug_string, colors_override)
         if shapepath:
             d['SHAPEPATH'] = shapepath
         fileout = open(os.path.join(
@@ -112,7 +117,8 @@ def generate_basechart_config(data_path, map_path, rule_set_path, resource_dir,
     fonts_path = os.path.join("./fonts", "fontset.lst")
     create_capability_files(os.path.join(resource_dir, "templates"),
                             os.path.join(rule_set_path, "color_tables"),
-                            map_path, fonts_path, debug, shapepath)
+                            map_path, fonts_path, debug, shapepath,
+                            colors_override)
     create_legend_files(os.path.join(resource_dir, "templates"),
                         os.path.join(rule_set_path, "color_tables"),
                         map_path, fonts_path, debug)
