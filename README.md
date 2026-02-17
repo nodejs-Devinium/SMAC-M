@@ -78,13 +78,13 @@ docker compose -f /<absolute-path-to-your-docker-compose-file> up -d
 And access the map via URL like this:
 
 ```
-http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true&STYLES=&CRS=EPSG%3A3857&WIDTH=1345&HEIGHT=574&BBOX=-13877171.677492695,6167575.677658709,-13864320.702112267,6173060.034438163&LAYERS=CLEANUP_1,DEPTH_AREA_1,DEPTH_DATA_1,SEABED_1,SIGNALS_1,CLEANUP_2,DEPTH_AREA_2,DEPTH_DATA_2,SEABED_2,SIGNALS_2,CLEANUP_3,DEPTH_AREA_3,DEPTH_DATA_3,SEABED_3,SIGNALS_3&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
+http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true&STYLES=&CRS=EPSG%3A3857&WIDTH=1345&HEIGHT=574&BBOX=-13877171.677492695,6167575.677658709,-13864320.702112267,6173060.034438163&LAYERS=CLEANUP_LAND_1,DEPTH_AREA_1,DEPTH_DATA_1,SEABED_1,SIGNALS_1,CLEANUP_LAND_2,DEPTH_AREA_2,DEPTH_DATA_2,SEABED_2,SIGNALS_2,CLEANUP_LAND_3,DEPTH_AREA_3,DEPTH_DATA_3,SEABED_3,SIGNALS_3&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
 ```
 
 Or if you want to use tile mode:
 
 ```
-http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&MODE=tile&TILEMODE=gmap&TILE=2211+3437+13&TILESIZE=256+256&LAYERS=CLEANUP_1+DEPTH_AREA_1+DEPTH_DATA_1+SEABED_1+SIGNALS_1+CLEANUP_2+DEPTH_AREA_2+DEPTH_DATA_2+SEABED_2+SIGNALS_2+CLEANUP_3+DEPTH_AREA_3+DEPTH_DATA_3+SEABED_3+SIGNALS_3&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
+http://localhost:8888/?map=/etc/mapserver/map/SeaChart_DAY_BRIGHT.map&MODE=tile&TILEMODE=gmap&TILE=2211+3437+13&TILESIZE=256+256&LAYERS=CLEANUP_LAND_1+DEPTH_AREA_1+DEPTH_DATA_1+SEABED_1+SIGNALS_1+CLEANUP_LAND_2+DEPTH_AREA_2+DEPTH_DATA_2+SEABED_2+SIGNALS_2+CLEANUP_LAND_3+DEPTH_AREA_3+DEPTH_DATA_3+SEABED_3+SIGNALS_3&q_shallow_depth=5&q_safety_depth=10&q_deep_depth=30&q_depth_units=feet
 ```
 
 As you can see:
@@ -497,7 +497,10 @@ Layers of generated mapfiles are separated into groups:
 
 - `BROKEN` - Layers that cause errors because of missing attributes, etc.
 
-- `CLEANUP` - A group of synthetic layers that should be used to clear the remainings from rendered layers with smaller navigational purpose indexes.
+Convenience groups of synthetic layers that should be used to clear the remainings from rendered layers with smaller navigational purpose indexes:
+
+- `CLEANUP_DEPTH` - Cleanup layers based on `DEPARE` polygons data.
+- `CLEANUP_LAND` - Cleanup layers based on `LNDARE` polygons data.
 
 - `MISC` - Everything else.
 
@@ -505,7 +508,7 @@ They are defined in [layer_groups.py](chart-installation/generate_map_files/mapg
 
 When mapfiles are generated their layers will be marked with corresponding group name and an index of navigational purpose (e.g. `DEPTH_AREA_4`, `SEABED_3`, etc.).
 
-You can use and combine them in the `LAYERS` query parameter when you request the map from your MapServer (e.g. `LAYERS=CLEANUP_1,DEPTH_AREA_1,DEPTH_DATA_1,SEABED_1,CLEANUP_2,DEPTH_AREA_2,DEPTH_DATA_2,SEABED_2,...`).
+You can use and combine them in the `LAYERS` query parameter when you request the map from your MapServer (e.g. `LAYERS=CLEANUP_LAND_1,DEPTH_AREA_1,DEPTH_DATA_1,SEABED_1,CLEANUP_LAND_2,DEPTH_AREA_2,DEPTH_DATA_2,SEABED_2,...`).
 
 **IMPORTANT!** Layer groups order matters!
 
@@ -513,7 +516,17 @@ You can use and combine them in the `LAYERS` query parameter when you request th
 
 - Layer groups with filled polygons should go first (e.g. `LAND_1,DEPTH_AREA_1`). If you put layer groups with labels and symbols first (e.g. `SEABED_1,DEPTH_AREA_1`) you won't see them because they will be covered by the filled polygons from the layer groups that go after them.
 
-- When you request data from multiple zoom levels the lower ones may have less accurate data. When layers for higher zoom levels will be rendered they will cover the layers for lower zoom levels, but some areas and elements from lower zoom levels may still be seen through the top layers (especially if you don't render any layers with filled polygons). In order to get rid of this issue you should use `CLEANUP` layer groups in your request when you start a list of layer groups for next navigational purpose index (e.g. `CLEANUP_1,DEPTH_AREA_1,DEPTH_DATA_1,CLEANUP_2,DEPTH_AREA_2,DEPTH_DATA_2,...`). It will render polygons based on `LNDARE` and `DEPARE` features for the current zoom level filled with [`cleanup` color from settings](noaa/config.enc.noaa.toml#L7) to cover all those excess areas of data from lower zoom levels. **IMPORTANT!** If you want to make `cleanup` color transparent in the end you'll have to put some middleware process between MapServer and your app that will receive PNG response from MapServer, make that `cleanup` color transparent pixel by pixel (don't forget to add some anti-aliasing), and return PNG response without it. E.g. you can use [`sharp` library for Node.js](https://github.com/lovell/sharp/issues/1648#issuecomment-1448232952).
+When you request data from multiple zoom levels the lower ones may have less accurate data. When layers for higher zoom levels will be rendered they will cover the layers for lower zoom levels, but some areas and elements from lower zoom levels may still be seen through the top layers (especially if you don't render any layers with filled polygons). In order to get rid of this issue you should use `CLEANUP_*` layer groups in your request when you start a list of layer groups for next navigational purpose index. `CLEANUP_DEPTH` groups will render polygons based on `DEPARE` features for the current zoom level, and `CLEANUP_LAND` groups will do the same based on `LNDARE` features. In both cases they will use the [`cleanup` color from settings](noaa/config.enc.noaa.toml#L7) to cover all those excess areas of data from lower zoom levels.
+
+If you have `DEPTH_AREA` groups in your list you should use only `CLEANUP_LAND` groups for cleanup because `DEPTH_AREA` groups will render the same polygons as `CLEANUP_DEPTH` (but with different colors) so you don't have to repeat the same procedure twice.
+
+E.g. `CLEANUP_LAND_1,DEPTH_AREA_1,DEPTH_DATA_1,CLEANUP_LAND_2,DEPTH_AREA_2,DEPTH_DATA_2,...`
+
+But if you don't request `DEPTH_AREA` groups you should use both - `CLEANUP_DEPTH` and `CLEANUP_LAND` - sets of groups for cleanup and also put `BCKGRND` layer (without navigational purpose indexes) to the beginning of the layers list. `BCKGRND` is a special layer that will render solid background using the `cleanup` color underneath all other layers and fill all possible micro gaps between polygons based on `DEPARE` and `LNDARE` features.
+
+E.g. `BCKGRND,CLEANUP_DEPTH_1,CLEANUP_LAND_1,DEPTH_DATA_1,SEABED_1,CLEANUP_DEPTH_2,CLEANUP_LAND_2,DEPTH_DATA_2,SEABED_2,...`
+
+**IMPORTANT!** If you want to make `cleanup` color transparent in the end you'll have to put some middleware process between MapServer and your app that will receive PNG response from MapServer, make that `cleanup` color transparent pixel by pixel (don't forget to add some anti-aliasing), and return PNG response (or use some other image format with alpha level support) without it. E.g. you can use [`sharp` library for Node.js](https://github.com/lovell/sharp/issues/1648#issuecomment-1448232952).
 
 ## CGI substitutes
 
@@ -524,4 +537,4 @@ Mapfiles accept the following CGI substitutes as the query parameters:
 - `q_deep_depth` (in meters; default: `30`)
 - `q_depth_units` (`meters` or `feet`; default: `meters`)
 
-They are defined in [SeaChart_THEME.map](chart-installation/generate_map_files/resources/templates/SeaChart_THEME.map#L45-L57) file and used to generate layers for `DEPARE` and `SOUNDG` features.
+They are defined in [SeaChart_THEME.map](chart-installation/generate_map_files/resources/templates/SeaChart_THEME.map#L44-L56) file and used to generate layers for `DEPARE` and `SOUNDG` features.

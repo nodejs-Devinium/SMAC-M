@@ -76,7 +76,7 @@ class ChartSymbols:
 
         self.layer_groups_to_keep = layers_and_lookups.get('layer_groups_to_keep', [])
         if len(self.layer_groups_to_keep) == 0:
-            self.layer_groups_to_keep = None;
+            self.layer_groups_to_keep = None
 
         self.layer_levels_to_resize_symbols = symbols_resize.get('layer_levels_to_resize', [])
         self.lookups_to_resize_symbols = symbols_resize.get('lookups_to_resize', [])

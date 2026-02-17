@@ -110,9 +110,9 @@ _layer_groups = {
     # BROKEN
     "CTRPNT": "BROKEN", # Control point (HEIGHT)
     "SBDARE": "BROKEN", # Seabed area (NATSUR)
-    # CLEANUP (a group of synthetic layers)
-    "CLNDEP": "CLEANUP", # Cleanup layer based on DEPARE polygon data
-    "CLNLND": "CLEANUP", # Cleanup layer based on LNDARE polygon data
+    # CLEANUP_* (convenience groups for synthetic layers)
+    "CLNDEP": "CLEANUP_DEPTH", # Cleanup layers based on DEPARE polygons data
+    "CLNLND": "CLEANUP_LAND", # Cleanup layers based on LNDARE polygons data
 }
 
 

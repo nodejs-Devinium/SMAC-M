@@ -1,5 +1,29 @@
 """Template strings to simplify code formatting"""
 
+background_layer_template = """
+    LAYER
+        NAME "BCKGRND"
+        TYPE POLYGON
+        STATUS ON
+        {requires}
+        FEATURE
+            POINTS
+                -180 -90
+                -180 90
+                180 90
+                180 -90
+                -180 -90
+            END
+        END
+
+        CLASS
+            STYLE
+                COLOR {background_color}
+            END
+        END
+    END
+"""
+
 mapfile_layer_template = """
 # LAYER: {feature}  LEVEL: {layer}
 

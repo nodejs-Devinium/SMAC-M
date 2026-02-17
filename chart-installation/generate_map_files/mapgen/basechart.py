@@ -11,6 +11,7 @@ from osgeo import ogr
 
 from .chartsymbols import ChartSymbols
 from .layer_groups import get_layer_groups
+from .templates import background_layer_template
 from utils import dirutils
 
 
@@ -31,9 +32,20 @@ def generate_includes(includes_dir, theme):
     return "\n    ".join(includes)
 
 
-def get_dictionary(theme, map_path, fonts_path, debug_string, colors_override={}):
+def get_dictionary(theme, map_path, fonts_path, debug_string,
+                   colors_override={}, layers_and_lookups={}):
+    background_layer = ''
     cleanup_color = colors_override.get('cleanup', None)
-    has_cleanup_color = cleanup_color is not None
+    if cleanup_color is not None:
+        background_layer_requires = ''
+        layer_groups_to_keep = layers_and_lookups.get('layer_groups_to_keep', [])
+        if len(layer_groups_to_keep) == 0 or 'DEPTH_AREA' in layer_groups_to_keep:
+            background_layer_requires = 'REQUIRES "![DEPARE_1]"'
+        background_layer = background_layer_template.format(
+            requires=background_layer_requires,
+            background_color=cleanup_color,
+        )
+
     return {'THEME': theme,
             'HOST': 'http://localhost/cgi-bin/mapserv.fcgi',
             'DEBUG': debug_string,
@@ -42,9 +54,7 @@ def get_dictionary(theme, map_path, fonts_path, debug_string, colors_override={}
             'INCLUDES': generate_includes(os.path.join(map_path, "includes"),
                                           theme),
             'SHAPEPATH': "../shape/",
-            'IMAGECOLOR': 'IMAGECOLOR {0}'.format(cleanup_color) if has_cleanup_color else '',
-            'IMAGEMODE': 'RGB' if has_cleanup_color else 'RGBA',
-            'TRANSPARENT': 'OFF' if has_cleanup_color else 'ON',
+            'BACKGROUND_LAYER': background_layer,
             }
 
 
@@ -54,7 +64,7 @@ debug_template = '''CONFIG "MS_ERRORFILE" "/tmp/SeaChart_{0}.log"
 
 
 def create_capability_files(template_path, themes_path, map_path, fonts_path,
-                            use_debug, shapepath, colors_override):
+                            use_debug, shapepath, colors_override, layers_and_lookups):
     template = Template(
         open(os.path.join(template_path, "SeaChart_THEME.map"), 'r').read())
     for theme in os.listdir(themes_path):
@@ -65,7 +75,8 @@ def create_capability_files(template_path, themes_path, map_path, fonts_path,
         if use_debug:
             debug_string = str.format(debug_template, theme)
 
-        d = get_dictionary(theme, map_path, fonts_path, debug_string, colors_override)
+        d = get_dictionary(theme, map_path, fonts_path, debug_string,
+                           colors_override, layers_and_lookups)
         if shapepath:
             d['SHAPEPATH'] = shapepath
         fileout = open(os.path.join(
@@ -118,7 +129,7 @@ def generate_basechart_config(data_path, map_path, rule_set_path, resource_dir,
     create_capability_files(os.path.join(resource_dir, "templates"),
                             os.path.join(rule_set_path, "color_tables"),
                             map_path, fonts_path, debug, shapepath,
-                            colors_override)
+                            colors_override, layers_and_lookups)
     create_legend_files(os.path.join(resource_dir, "templates"),
                         os.path.join(rule_set_path, "color_tables"),
                         map_path, fonts_path, debug)
@@ -427,7 +438,8 @@ def process_layer_colors(layer, color_table, input_file, msd, data, target,
     layer_groups = get_layer_groups()
     groups_to_keep = layer_groups_to_keep
     if groups_to_keep is not None:
-        groups_to_keep.append('CLEANUP') # always keep this group of synthetic layers
+        # always keep groups of synthetic layers
+        groups_to_keep.extend(['CLEANUP_DEPTH', 'CLEANUP_LAND'])
 
     for layer_group in layer_groups:
         if groups_to_keep is not None and \
