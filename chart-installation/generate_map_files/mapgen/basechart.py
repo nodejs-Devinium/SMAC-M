@@ -32,19 +32,11 @@ def generate_includes(includes_dir, theme):
     return "\n    ".join(includes)
 
 
-def get_dictionary(theme, map_path, fonts_path, debug_string,
-                   colors_override={}, layers_and_lookups={}):
+def get_dictionary(theme, map_path, fonts_path, debug_string, colors_override={}):
     background_layer = ''
     cleanup_color = colors_override.get('cleanup', None)
     if cleanup_color is not None:
-        background_layer_requires = ''
-        layer_groups_to_keep = layers_and_lookups.get('layer_groups_to_keep', [])
-        if len(layer_groups_to_keep) == 0 or 'DEPTH_AREA' in layer_groups_to_keep:
-            background_layer_requires = 'REQUIRES "![DEPARE_1]"'
-        background_layer = background_layer_template.format(
-            requires=background_layer_requires,
-            background_color=cleanup_color,
-        )
+        background_layer = background_layer_template.format(background_color=cleanup_color)
 
     return {'THEME': theme,
             'HOST': 'http://localhost/cgi-bin/mapserv.fcgi',
@@ -64,7 +56,7 @@ debug_template = '''CONFIG "MS_ERRORFILE" "/tmp/SeaChart_{0}.log"
 
 
 def create_capability_files(template_path, themes_path, map_path, fonts_path,
-                            use_debug, shapepath, colors_override, layers_and_lookups):
+                            use_debug, shapepath, colors_override):
     template = Template(
         open(os.path.join(template_path, "SeaChart_THEME.map"), 'r').read())
     for theme in os.listdir(themes_path):
@@ -75,8 +67,7 @@ def create_capability_files(template_path, themes_path, map_path, fonts_path,
         if use_debug:
             debug_string = str.format(debug_template, theme)
 
-        d = get_dictionary(theme, map_path, fonts_path, debug_string,
-                           colors_override, layers_and_lookups)
+        d = get_dictionary(theme, map_path, fonts_path, debug_string, colors_override)
         if shapepath:
             d['SHAPEPATH'] = shapepath
         fileout = open(os.path.join(
@@ -129,7 +120,7 @@ def generate_basechart_config(data_path, map_path, rule_set_path, resource_dir,
     create_capability_files(os.path.join(resource_dir, "templates"),
                             os.path.join(rule_set_path, "color_tables"),
                             map_path, fonts_path, debug, shapepath,
-                            colors_override, layers_and_lookups)
+                            colors_override)
     create_legend_files(os.path.join(resource_dir, "templates"),
                         os.path.join(rule_set_path, "color_tables"),
                         map_path, fonts_path, debug)

@@ -5,7 +5,6 @@ background_layer_template = """
         NAME "BCKGRND"
         TYPE POLYGON
         STATUS ON
-        {requires}
         FEATURE
             POINTS
                 -180 -90
